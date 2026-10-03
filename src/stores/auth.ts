@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import * as authApi from '@/api/auth'
 import { refreshSession, setAccessToken } from '@/api/client'
+import { queryClient } from '@/api/queryClient'
 import type { Me, TokenResponse } from '@/types/api'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -24,6 +25,8 @@ export const useAuthStore = defineStore('auth', () => {
     await authApi.logout().catch(() => undefined)
     setAccessToken(null)
     user.value = null
+    // Os dados da conta não podem sobrar para quem entrar depois no mesmo navegador.
+    queryClient.removeQueries({ queryKey: ['me'] })
   }
 
   return { user, isLoggedIn, login, register, restore, logout }

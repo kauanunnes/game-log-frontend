@@ -117,6 +117,13 @@ export interface Me {
   gender: Gender | null
 }
 
+/** Só o que as telas usam de {@code GET /me/stats}. */
+export interface MyStats {
+  total: number
+  byStatus: Record<EntryStatus, number>
+  hoursPlayed: number
+}
+
 export interface TokenResponse {
   accessToken: string
   expiresIn: number

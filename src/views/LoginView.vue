@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ApiError } from '@/api/client'
+import { errorMessage } from '@/api/client'
 import AppWindow from '@/components/AppWindow.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -23,7 +23,7 @@ async function submit() {
       typeof redirect === 'string' && redirect.startsWith('/') ? redirect : { name: 'home' },
     )
   } catch (e) {
-    error.value = e instanceof ApiError ? e.message : 'Não foi possível conectar ao servidor.'
+    error.value = errorMessage(e)
   } finally {
     loading.value = false
   }

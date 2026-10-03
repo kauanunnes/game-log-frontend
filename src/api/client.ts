@@ -13,6 +13,13 @@ export class ApiError extends Error {
   }
 }
 
+/** Mensagem para mostrar ao usuário, com o motivo de cada campo inválido quando houver. */
+export function errorMessage(error: unknown): string {
+  if (!(error instanceof ApiError)) return 'Não foi possível conectar ao servidor.'
+  const fields = error.problem.errors?.map((issue) => issue.message) ?? []
+  return fields.length ? fields.join(' · ') : error.message
+}
+
 export function setAccessToken(token: string | null) {
   accessToken = token
 }
