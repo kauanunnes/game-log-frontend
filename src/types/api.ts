@@ -50,6 +50,29 @@ export interface GameDetails {
   /** De 0 a 100, arredondada. */
   igdbRating: number | null
   igdbRatingCount: number | null
+  community: Community
+}
+
+/** Só perfis públicos (RN11). */
+export interface Community {
+  averageRating: number | null
+  ratingsCount: number
+  /** Uma faixa a cada meia estrela, de 0 a 5. */
+  ratingDistribution: { stars: number; count: number }[]
+  recommendPercent: number | null
+  playersCount: number
+  wantToPlayCount: number
+}
+
+export interface PublicReview {
+  user: { username: string; displayName: string | null }
+  game: GameSummary
+  status: EntryStatus
+  rating: number | null
+  recommends: boolean | null
+  text: string
+  hasSpoilers: boolean
+  reviewedAt: string
 }
 
 export interface Review {

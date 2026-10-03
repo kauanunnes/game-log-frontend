@@ -1,4 +1,12 @@
-import type { GameDetails, GameSort, GameSummary, Genre, Page, Platform } from '@/types/api'
+import type {
+  GameDetails,
+  GameSort,
+  GameSummary,
+  Genre,
+  Page,
+  Platform,
+  PublicReview,
+} from '@/types/api'
 import { api } from './client'
 
 export interface GameSearch {
@@ -21,6 +29,10 @@ export function searchGames(search: GameSearch, signal?: AbortSignal) {
 }
 
 export const getGame = (slug: string) => api<GameDetails>(`/games/${encodeURIComponent(slug)}`)
+
+/** @param page começa em 0 */
+export const listGameReviews = (slug: string, page: number) =>
+  api<Page<PublicReview>>(`/games/${encodeURIComponent(slug)}/reviews?page=${page}&size=10`)
 
 export const listGenres = () => api<Genre[]>('/genres')
 

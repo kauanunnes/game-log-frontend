@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, toRef, watchEffect } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
+import { useRoute } from 'vue-router'
+import { keepPreviousData, useQuery } from '@tanstack/vue-query'
 import { ApiError } from '@/api/client'
-import { getGame } from '@/api/games'
+import { getGame, listGameReviews } from '@/api/games'
 import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
+import PageNav from '@/components/PageNav.vue'
+import RatingHistogram from '@/components/RatingHistogram.vue'
+import ReviewCard from '@/components/ReviewCard.vue'
+import StarRating from '@/components/StarRating.vue'
 import UnderConstruction from '@/components/UnderConstruction.vue'
 import { formatDate, formatNumber } from '@/lib/format'
 import { kindLabel } from '@/lib/labels'
@@ -20,6 +25,19 @@ const {
 } = useQuery({
   queryKey: ['game', slug],
   queryFn: () => getGame(slug.value),
+})
+
+/** As avaliações paginam pela URL: {@code ?page=2}. */
+const route = useRoute()
+const reviewPage = computed(() => Math.max(1, Number(route.query.page) || 1))
+const {
+  data: reviews,
+  error: reviewsError,
+  refetch: refetchReviews,
+} = useQuery({
+  queryKey: ['game-reviews', slug, reviewPage],
+  queryFn: () => listGameReviews(slug.value, reviewPage.value - 1),
+  placeholderData: keepPreviousData,
 })
 
 const notFound = computed(
@@ -135,9 +153,64 @@ watchEffect(() => {
         </dl>
       </fieldset>
 
-      <UnderConstruction
-        :items="['Números da comunidade', 'Avaliações', 'Adicionar à biblioteca']"
-      />
+      <fieldset class="community">
+        <legend>Comunidade</legend>
+        <div v-if="game.community.averageRating !== null" class="average">
+          <StarRating
+            :model-value="game.community.averageRating"
+            readonly
+            label="Média da comunidade"
+          />
+          <span class="prose">
+            {{ formatNumber(game.community.ratingsCount) }}
+            {{ game.community.ratingsCount === 1 ? 'nota' : 'notas' }}
+          </span>
+          <RatingHistogram :distribution="game.community.ratingDistribution" />
+        </div>
+        <p v-else class="prose">Ninguém deu nota ainda.</p>
+        <dl class="numbers">
+          <div>
+            <dt>Recomendam</dt>
+            <dd>
+              {{
+                game.community.recommendPercent === null
+                  ? '—'
+                  : `${game.community.recommendPercent}%`
+              }}
+            </dd>
+          </div>
+          <div>
+            <dt>Jogaram</dt>
+            <dd>{{ formatNumber(game.community.playersCount) }}</dd>
+          </div>
+          <div>
+            <dt>Querem jogar</dt>
+            <dd>{{ formatNumber(game.community.wantToPlayCount) }}</dd>
+          </div>
+        </dl>
+      </fieldset>
+
+      <fieldset>
+        <legend>Avaliações</legend>
+        <ErrorMessage v-if="reviewsError" @retry="refetchReviews()">
+          Não foi possível carregar as avaliações.
+        </ErrorMessage>
+        <p v-else-if="reviews && !reviews.content.length" class="prose">
+          Ainda não há avaliações públicas deste jogo.
+        </p>
+        <ul v-else-if="reviews" class="reviews">
+          <li v-for="review in reviews.content" :key="review.user.username">
+            <ReviewCard :review="review" />
+          </li>
+        </ul>
+        <PageNav
+          v-if="reviews && reviews.page.totalPages > 1"
+          :page="reviewPage"
+          :total-pages="reviews.page.totalPages"
+        />
+      </fieldset>
+
+      <UnderConstruction :items="['Adicionar à biblioteca']" />
     </template>
 
     <template v-if="game" #status>
@@ -239,6 +312,42 @@ p {
 
 fieldset {
   margin-bottom: 16px;
+}
+
+.average {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.average .histogram {
+  grid-column: 1 / -1;
+  max-width: 320px;
+}
+
+.numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+}
+
+.numbers dt {
+  font-size: 13px;
+}
+
+.numbers dd {
+  margin: 0;
+  font: 20px var(--font-display);
+}
+
+.reviews {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .summary {
