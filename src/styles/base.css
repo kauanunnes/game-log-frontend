@@ -145,6 +145,19 @@ legend {
   font-family: var(--font-text);
 }
 
+.error-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 2px 2px var(--black);
+  color: var(--white);
+  font: 700 24px/1 var(--font-text);
+}
+
 .prose {
   font-family: var(--font-text);
 }
@@ -155,9 +168,10 @@ legend {
   max-width: 440px;
 }
 
+/* Pelo menos duas colunas, mesmo no celular. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(140px, calc(50% - 6px)), 1fr));
   gap: 12px;
 }
 

@@ -8,10 +8,12 @@ import './styles/base.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { VueQueryPlugin } from '@tanstack/vue-query'
 import App from './App.vue'
+import { queryClient } from './api/queryClient'
 import router from './router'
 import { useAuthStore } from './stores/auth'
 
-const app = createApp(App).use(createPinia())
+const app = createApp(App).use(createPinia()).use(VueQueryPlugin, { queryClient })
 await useAuthStore().restore()
 app.use(router).mount('#app')

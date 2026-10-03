@@ -1,0 +1,3 @@
+allowBuilds:
+  # Só troca a build para Vue 2; a padrão já é a do Vue 3.
+  vue-demi: false

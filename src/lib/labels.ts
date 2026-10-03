@@ -1,4 +1,4 @@
-import type { EntryStatus, Gender } from '@/types/api'
+import type { EntryStatus, GameSort, Gender } from '@/types/api'
 
 export const statusLabel: Record<EntryStatus, string> = {
   WISHLIST: 'Lista de desejos',
@@ -13,4 +13,12 @@ export const genderLabel: Record<Gender, string> = {
   MALE: 'Masculino',
   NON_BINARY: 'Não binário',
   OTHER: 'Outro',
+}
+
+export const sortLabel: Record<GameSort, string> = {
+  relevance: 'Relevância',
+  popular: 'Mais populares',
+  rating: 'Mais bem avaliados',
+  release: 'Mais recentes',
+  title: 'Título (A–Z)',
 }

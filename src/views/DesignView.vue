@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AppWindow from '@/components/AppWindow.vue'
+import ErrorMessage from '@/components/ErrorMessage.vue'
 import GameCard from '@/components/GameCard.vue'
+import GameCardSkeleton from '@/components/GameCardSkeleton.vue'
+import PageNav from '@/components/PageNav.vue'
 import StarRating from '@/components/StarRating.vue'
 import UnderConstruction from '@/components/UnderConstruction.vue'
 import { genderLabel } from '@/lib/labels'
@@ -137,6 +140,15 @@ const samples: {
         <div class="grid">
           <GameCard v-for="sample in samples" :key="sample.game.id" v-bind="sample" />
         </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Carregando, erro e paginação</legend>
+        <div class="grid">
+          <GameCardSkeleton v-for="n in 2" :key="n" />
+        </div>
+        <ErrorMessage>Não foi possível carregar os jogos. Sem conexão com o servidor.</ErrorMessage>
+        <PageNav :page="2" :total-pages="5" />
       </fieldset>
 
       <fieldset>

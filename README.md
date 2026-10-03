@@ -4,7 +4,7 @@ Front-end do Game Log, um diário de jogos com cara de Windows 95. A API e a doc
 
 ## Stack
 
-Vue 3 · TypeScript · Vite · Vue Router · Pinia · Vitest · ESLint + Oxlint · Prettier · pnpm
+Vue 3 · TypeScript · Vite · Vue Router · Pinia · TanStack Query · Vitest · ESLint + Oxlint · Prettier · pnpm
 
 ## Rodando
 
@@ -31,7 +31,7 @@ Abre em `http://localhost:5173`. As chamadas para `/api` vão para a API em `htt
 src/
 ├── api/          cliente HTTP (token em memória, refresh automático no 401) e um arquivo por recurso
 ├── components/   janela, barra de tarefas, nota em estrelas, card de jogo...
-├── lib/          rótulos em português dos enums da API
+├── lib/          rótulos em português dos enums da API e filtros da URL
 ├── router/       rotas, abas e guarda de login
 ├── stores/       Pinia: sessão
 ├── styles/       tokens de design e estilos base

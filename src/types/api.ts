@@ -1,6 +1,7 @@
 export type EntryStatus = 'WISHLIST' | 'BACKLOG' | 'PLAYING' | 'PLAYED' | 'DROPPED'
 export type Gender = 'FEMALE' | 'MALE' | 'NON_BINARY' | 'OTHER'
 export type AcquisitionMethod = 'PURCHASED' | 'GIFT' | 'SUBSCRIPTION' | 'FREE'
+export type GameSort = 'relevance' | 'popular' | 'rating' | 'release' | 'title'
 
 export interface Money {
   amount: string
@@ -13,6 +14,19 @@ export interface GameSummary {
   title: string
   coverUrl: string | null
   releaseYear: number | null
+}
+
+export interface Genre {
+  id: number
+  name: string
+  slug: string
+}
+
+export interface Platform {
+  id: number
+  name: string
+  abbreviation: string | null
+  slug: string
 }
 
 export interface Review {
