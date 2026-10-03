@@ -97,6 +97,21 @@ export interface Acquisition {
   acquiredOn: string | null
 }
 
+/** Corpo do {@code PUT /me/library/{gameId}}. */
+export interface LibraryEntryRequest {
+  status: EntryStatus
+  favorite: boolean
+  review: Review | null
+  playthrough: Playthrough | null
+  acquisition: Acquisition | null
+}
+
+export interface Store {
+  id: number
+  name: string
+  slug: string
+}
+
 export interface LibraryEntry {
   game: GameSummary
   status: EntryStatus
@@ -108,6 +123,8 @@ export interface LibraryEntry {
   updatedAt: string
 }
 
+export type ProfileVisibility = 'PUBLIC' | 'PRIVATE'
+
 export interface Me {
   id: number
   username: string
@@ -115,6 +132,11 @@ export interface Me {
   displayName: string | null
   bio: string | null
   gender: Gender | null
+  role?: 'USER' | 'ADMIN'
+  profileVisibility?: ProfileVisibility
+  showSpending?: boolean
+  defaultCurrency?: string
+  createdAt?: string
 }
 
 /** Só o que as telas usam de {@code GET /me/stats}. */

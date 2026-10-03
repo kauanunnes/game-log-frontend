@@ -6,6 +6,7 @@ import type {
   Page,
   Platform,
   PublicReview,
+  Store,
 } from '@/types/api'
 import { api } from './client'
 
@@ -37,3 +38,5 @@ export const listGameReviews = (slug: string, page: number) =>
 export const listGenres = () => api<Genre[]>('/genres')
 
 export const listPlatforms = () => api<Platform[]>('/platforms')
+
+export const listStores = () => api<Store[]>('/stores')

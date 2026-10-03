@@ -6,11 +6,11 @@ import { ApiError } from '@/api/client'
 import { getGame, listGameReviews } from '@/api/games'
 import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
+import LibraryActions from '@/components/LibraryActions.vue'
 import PageNav from '@/components/PageNav.vue'
 import RatingHistogram from '@/components/RatingHistogram.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
 import StarRating from '@/components/StarRating.vue'
-import UnderConstruction from '@/components/UnderConstruction.vue'
 import { formatDate, formatNumber } from '@/lib/format'
 import { kindLabel } from '@/lib/labels'
 
@@ -138,6 +138,8 @@ watchEffect(() => {
         </div>
       </article>
 
+      <LibraryActions :game="game" />
+
       <fieldset v-if="game.summary">
         <legend>Sobre</legend>
         <p class="prose summary">{{ game.summary }}</p>
@@ -209,8 +211,6 @@ watchEffect(() => {
           :total-pages="reviews.page.totalPages"
         />
       </fieldset>
-
-      <UnderConstruction :items="['Adicionar à biblioteca']" />
     </template>
 
     <template v-if="game" #status>

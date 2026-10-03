@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
+import { createPinia } from 'pinia'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import type { GameDetails, PublicReview } from '@/types/api'
@@ -69,12 +70,13 @@ function mountGame(game: Response, reviews: Response = json(page())) {
       { path: '/games', name: 'explore', component: { render: () => null } },
       { path: '/games/:slug', name: 'game', component: GameView, props: true },
       { path: '/u/:username', name: 'profile', component: { render: () => null } },
+      { path: '/login', name: 'login', component: { render: () => null } },
     ],
   })
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return mount(GameView, {
     props: { slug: 'hollow-knight' },
-    global: { plugins: [router, [VueQueryPlugin, { queryClient }]] },
+    global: { plugins: [router, createPinia(), [VueQueryPlugin, { queryClient }]] },
   })
 }
 
@@ -90,6 +92,8 @@ describe('GameView', () => {
     expect(wrapper.find('.display').text()).toBe('90')
     expect(wrapper.find('[aria-label=Gêneros] a').attributes('href')).toBe('/games?genre=2')
     expect(wrapper.find('dl').text()).toContain('Fantasy')
+    // sem login, a seção da biblioteca convida a entrar e voltar para cá
+    expect(wrapper.find('.library a').attributes('href')).toBe('/login?redirect=/')
   })
 
   it('mostra os números da comunidade', async () => {

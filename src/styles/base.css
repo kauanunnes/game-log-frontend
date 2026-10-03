@@ -91,7 +91,8 @@ button:disabled {
   outline-offset: -5px;
 }
 
-input,
+/* Campo de texto rebaixado; rádio e checkbox ficam com o desenho nativo. */
+input:not([type='checkbox'], [type='radio']),
 select,
 textarea {
   padding: 5px 6px;
@@ -101,6 +102,11 @@ textarea {
   box-shadow: var(--sunken);
   color: var(--text);
   font: 15px var(--font-text);
+}
+
+input,
+select,
+textarea {
   accent-color: var(--navy);
 }
 

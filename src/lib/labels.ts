@@ -1,4 +1,4 @@
-import type { EntryStatus, GameKind, GameSort, Gender } from '@/types/api'
+import type { AcquisitionMethod, EntryStatus, GameKind, GameSort, Gender } from '@/types/api'
 
 export const statusLabel: Record<EntryStatus, string> = {
   WISHLIST: 'Lista de desejos',
@@ -31,4 +31,11 @@ export const kindLabel: Record<GameKind, string> = {
   REMASTER: 'Remaster',
   EXPANDED: 'Edição expandida',
   PORT: 'Port',
+}
+
+export const acquisitionLabel: Record<AcquisitionMethod, string> = {
+  PURCHASED: 'Compra',
+  GIFT: 'Presente',
+  SUBSCRIPTION: 'Assinatura',
+  FREE: 'Gratuito',
 }
