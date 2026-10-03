@@ -1,4 +1,4 @@
-import type { EntryStatus, GameSort, Gender } from '@/types/api'
+import type { EntryStatus, GameKind, GameSort, Gender } from '@/types/api'
 
 export const statusLabel: Record<EntryStatus, string> = {
   WISHLIST: 'Lista de desejos',
@@ -21,4 +21,14 @@ export const sortLabel: Record<GameSort, string> = {
   rating: 'Mais bem avaliados',
   release: 'Mais recentes',
   title: 'Título (A–Z)',
+}
+
+export const kindLabel: Record<GameKind, string> = {
+  MAIN: 'Jogo principal',
+  EXPANSION: 'Expansão',
+  STANDALONE: 'Expansão independente',
+  REMAKE: 'Remake',
+  REMASTER: 'Remaster',
+  EXPANDED: 'Edição expandida',
+  PORT: 'Port',
 }

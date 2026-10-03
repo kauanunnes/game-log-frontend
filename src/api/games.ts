@@ -1,4 +1,4 @@
-import type { GameSort, GameSummary, Genre, Page, Platform } from '@/types/api'
+import type { GameDetails, GameSort, GameSummary, Genre, Page, Platform } from '@/types/api'
 import { api } from './client'
 
 export interface GameSearch {
@@ -19,6 +19,8 @@ export function searchGames(search: GameSearch, signal?: AbortSignal) {
   }
   return api<Page<GameSummary>>(`/games?${params}`, { signal })
 }
+
+export const getGame = (slug: string) => api<GameDetails>(`/games/${encodeURIComponent(slug)}`)
 
 export const listGenres = () => api<Genre[]>('/genres')
 

@@ -1,6 +1,6 @@
 <template>
   <div class="skeleton" aria-hidden="true">
-    <span class="cover" />
+    <span class="cover loading" />
     <span class="line" />
     <span class="line short" />
   </div>
@@ -17,9 +17,7 @@
 
 .cover {
   aspect-ratio: 3 / 4;
-  background: repeating-conic-gradient(var(--light) 0 25%, var(--gray) 0 50%) 0 0 / 4px 4px;
   box-shadow: var(--sunken);
-  animation: blink 1s step-end infinite;
 }
 
 .line {
@@ -29,17 +27,5 @@
 
 .short {
   width: 40%;
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cover {
-    animation: none;
-  }
 }
 </style>

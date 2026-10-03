@@ -175,6 +175,24 @@ legend {
   gap: 12px;
 }
 
+/* Bloco pontilhado que pisca enquanto os dados chegam. */
+.loading {
+  background: repeating-conic-gradient(var(--light) 0 25%, var(--gray) 0 50%) 0 0 / 4px 4px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading {
+    animation: none;
+  }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

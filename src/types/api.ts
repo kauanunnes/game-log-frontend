@@ -2,6 +2,8 @@ export type EntryStatus = 'WISHLIST' | 'BACKLOG' | 'PLAYING' | 'PLAYED' | 'DROPP
 export type Gender = 'FEMALE' | 'MALE' | 'NON_BINARY' | 'OTHER'
 export type AcquisitionMethod = 'PURCHASED' | 'GIFT' | 'SUBSCRIPTION' | 'FREE'
 export type GameSort = 'relevance' | 'popular' | 'rating' | 'release' | 'title'
+export type GameKind =
+  'MAIN' | 'EXPANSION' | 'STANDALONE' | 'REMAKE' | 'REMASTER' | 'EXPANDED' | 'PORT'
 
 export interface Money {
   amount: string
@@ -27,6 +29,27 @@ export interface Platform {
   name: string
   abbreviation: string | null
   slug: string
+}
+
+export interface GameDetails {
+  id: number
+  slug: string
+  title: string
+  summary: string | null
+  releaseDate: string | null
+  kind: GameKind
+  coverUrl: string | null
+  genres: Genre[]
+  platforms: Platform[]
+  developers: string[]
+  publishers: string[]
+  franchises: string[]
+  themes: string[]
+  modes: string[]
+  perspectives: string[]
+  /** De 0 a 100, arredondada. */
+  igdbRating: number | null
+  igdbRatingCount: number | null
 }
 
 export interface Review {

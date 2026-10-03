@@ -18,6 +18,7 @@ import {
   toQuery,
   type GameFilters,
 } from '@/lib/gameFilters'
+import { formatNumber } from '@/lib/format'
 import { sortLabel } from '@/lib/labels'
 import type { GameSort } from '@/types/api'
 
@@ -48,7 +49,7 @@ const { data, error, isPending, isFetching, isPlaceholderData, refetch } = useQu
 const count = computed(() => {
   const total = data.value?.page.totalElements ?? 0
   if (total === 0) return 'Nenhum jogo'
-  return total === 1 ? '1 jogo' : `${total.toLocaleString('pt-BR')} jogos`
+  return total === 1 ? '1 jogo' : `${formatNumber(total)} jogos`
 })
 const hasFilters = computed(() => Object.keys(toQuery({ ...filters.value, page: 1 })).length > 0)
 const errorText = computed(() =>
