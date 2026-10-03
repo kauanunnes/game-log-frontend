@@ -5,6 +5,7 @@ import { errorMessage } from '@/api/client'
 import { listPlatforms, listStores } from '@/api/games'
 import { removeMyEntry, saveMyEntry } from '@/api/me'
 import { allows, partLabel, type EntryPart } from '@/lib/entryRules'
+import { currencyOptions } from '@/lib/format'
 import { acquisitionLabel, statusLabel } from '@/lib/labels'
 import { useAuthStore } from '@/stores/auth'
 import type { AcquisitionMethod, EntryStatus, LibraryEntry, LibraryEntryRequest } from '@/types/api'
@@ -20,7 +21,6 @@ const emit = defineEmits<{ close: [] }>()
 
 const STATUSES: EntryStatus[] = ['WISHLIST', 'BACKLOG', 'PLAYING', 'PLAYED', 'DROPPED']
 const METHODS = Object.keys(acquisitionLabel) as AcquisitionMethod[]
-const CURRENCIES = ['BRL', 'USD', 'EUR', 'GBP', 'JPY', 'ARS']
 const today = new Date().toISOString().slice(0, 10)
 
 const auth = useAuthStore()
@@ -210,7 +210,7 @@ function remove() {
           <label>
             O que você achou?
             <textarea v-model="form.text" rows="4" maxlength="2000" />
-            <small class="prose counter">{{ form.text.length }}/2000</small>
+            <small class="hint counter">{{ form.text.length }}/2000</small>
           </label>
           <label class="choice">
             <input v-model="form.hasSpoilers" type="checkbox" /> Contém spoiler
@@ -284,7 +284,9 @@ function remove() {
             <label>
               Moeda
               <select v-model="form.currency">
-                <option v-for="currency in CURRENCIES" :key="currency">{{ currency }}</option>
+                <option v-for="currency in currencyOptions(form.currency)" :key="currency">
+                  {{ currency }}
+                </option>
               </select>
             </label>
           </template>
@@ -332,12 +334,6 @@ function remove() {
   gap: 4px 14px;
 }
 
-.form .choice {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .rating {
   display: flex;
   align-items: center;
@@ -358,8 +354,6 @@ function remove() {
 
 .counter {
   justify-self: end;
-  color: var(--muted);
-  font-size: 12px;
 }
 
 .pair {

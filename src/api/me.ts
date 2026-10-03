@@ -1,6 +1,25 @@
-import type { LibraryCounts, LibraryEntry, LibraryEntryRequest, Page, Stats } from '@/types/api'
+import type { LibraryCounts, LibraryEntry, LibraryEntryRequest, Me, Page, Stats } from '@/types/api'
 import { ApiError, api } from './client'
 import { libraryQuery, type LibraryQuery } from './users'
+
+export type ProfileChanges = Partial<Pick<Me, 'username' | 'displayName' | 'bio' | 'gender'>>
+export type SettingsChanges = Partial<
+  Pick<Me, 'profileVisibility' | 'showSpending' | 'defaultCurrency'>
+>
+
+/** JSON Merge Patch: só os campos enviados mudam, e `null` limpa. */
+export const updateMe = (changes: ProfileChanges) =>
+  api<Me>('/me', { method: 'PATCH', body: changes })
+
+export const updateMySettings = (changes: SettingsChanges) =>
+  api<Me>('/me/settings', { method: 'PATCH', body: changes })
+
+/** Encerra todas as sessões da conta, inclusive esta. */
+export const changeMyPassword = (currentPassword: string, newPassword: string) =>
+  api<void>('/me/password', { method: 'PUT', body: { currentPassword, newPassword } })
+
+export const deleteMe = (password: string) =>
+  api<void>('/me', { method: 'DELETE', body: { password } })
 
 export const getMyStats = () => api<Stats>('/me/stats')
 

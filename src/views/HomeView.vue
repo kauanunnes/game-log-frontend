@@ -2,10 +2,14 @@
 import AppWindow from '@/components/AppWindow.vue'
 import PixelStar from '@/components/PixelStar.vue'
 import UnderConstruction from '@/components/UnderConstruction.vue'
+
+/** Recado de quem mandou para cá, como a exclusão da conta. */
+const notice: string | undefined = history.state?.notice
 </script>
 
 <template>
   <AppWindow title="GameLog.exe" tone="pink">
+    <p v-if="notice" class="prose notice" role="status">{{ notice }}</p>
     <div class="hero">
       <PixelStar class="star" />
       <h2 class="logo">Game<br />Log</h2>
@@ -62,5 +66,12 @@ import UnderConstruction from '@/components/UnderConstruction.vue'
 
 .actions {
   justify-content: center;
+}
+
+.notice {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: var(--yellow);
+  box-shadow: var(--sunken);
 }
 </style>

@@ -9,11 +9,12 @@ declare module 'vue-router' {
   }
 }
 
-const Placeholder = () => import('@/views/PlaceholderView.vue')
+type TabView = Pick<RouteRecordRaw, 'component' | 'props'>
+
 const LibraryTab = () => import('@/views/profile/ProfileLibraryTab.vue')
 
 /** O componente de cada aba do perfil; as abas de jogos mudam só o filtro. */
-const profileViews: Record<string, Pick<RouteRecordRaw, 'component' | 'props'>> = {
+const profileViews: Record<string, TabView> = {
   profile: { component: () => import('@/views/profile/ProfileOverview.vue') },
   'profile-played': {
     component: LibraryTab,
@@ -27,13 +28,20 @@ const profileViews: Record<string, Pick<RouteRecordRaw, 'component' | 'props'>> 
   'profile-stats': { component: () => import('@/views/profile/ProfileStatsTab.vue') },
 }
 
-const tabRoutes = (tabs: Tab[], section: string): RouteRecordRaw[] =>
+const settingsViews: Record<string, TabView> = {
+  settings: { component: () => import('@/views/settings/SettingsProfileTab.vue') },
+  'settings-account': { component: () => import('@/views/settings/SettingsAccountTab.vue') },
+  'settings-privacy': { component: () => import('@/views/settings/SettingsPrivacyTab.vue') },
+  'settings-data': { component: () => import('@/views/settings/SettingsDataTab.vue') },
+}
+
+const tabRoutes = (tabs: Tab[], section: string, views: Record<string, TabView>) =>
   tabs.map(({ path, name, label }) => ({
     path,
     name,
-    component: Placeholder,
+    ...views[name],
     meta: { title: `${section} · ${label}` },
-  }))
+  })) as RouteRecordRaw[]
 
 const routes: RouteRecordRaw[] = [
   {
@@ -59,12 +67,7 @@ const routes: RouteRecordRaw[] = [
     path: '/u/:username',
     component: () => import('@/views/ProfileView.vue'),
     props: true,
-    children: profileTabs.map(({ path, name, label }) => ({
-      path,
-      name,
-      ...profileViews[name],
-      meta: { title: `Perfil · ${label}` },
-    })) as RouteRecordRaw[],
+    children: tabRoutes(profileTabs, 'Perfil', profileViews),
   },
   {
     path: '/settings',
@@ -72,7 +75,7 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [
       { path: '', redirect: { name: 'settings' } },
-      ...tabRoutes(settingsTabs, 'Configurações'),
+      ...tabRoutes(settingsTabs, 'Configurações', settingsViews),
     ],
   },
   {

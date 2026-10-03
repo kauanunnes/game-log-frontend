@@ -20,15 +20,16 @@ defineProps<{ tabs: { label: string; to: RouteLocationRaw }[] }>()
 </template>
 
 <style scoped>
+/* Alinhadas por baixo, as inativas ficam 2px mais baixas que a ativa sem sair da faixa. */
 .tabs {
   display: flex;
+  align-items: flex-end;
   overflow-x: auto;
   padding: 2px 2px 0;
 }
 
 .tab {
   position: relative;
-  top: 2px;
   padding: 4px 12px;
   background: var(--surface);
   box-shadow:
@@ -42,7 +43,6 @@ defineProps<{ tabs: { label: string; to: RouteLocationRaw }[] }>()
 
 .tab.active {
   z-index: 1;
-  top: 0;
   padding-bottom: 6px;
   font-weight: 700;
 }
