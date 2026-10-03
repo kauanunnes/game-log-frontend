@@ -25,7 +25,7 @@ const { data: stats } = useQuery({
 })
 const { data: playing } = useQuery({
   queryKey: ['me', userId, 'playing'],
-  queryFn: () => listMyLibrary('PLAYING', 3),
+  queryFn: () => listMyLibrary({ status: ['PLAYING'], size: 3 }),
   enabled: loggedIn,
 })
 

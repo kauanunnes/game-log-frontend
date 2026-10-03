@@ -139,11 +139,54 @@ export interface Me {
   createdAt?: string
 }
 
-/** Só o que as telas usam de {@code GET /me/stats}. */
-export interface MyStats {
+export interface NamedCount {
+  id: number
+  name: string
+  count: number
+}
+
+/** Por moeda, sem conversão; os valores vêm como string. */
+export interface Spending {
+  currency: string
+  total: string
+  purchases: number
+  byStore: { storeId: number | null; name: string | null; total: string }[]
+  byYear: { year: number; total: string }[]
+}
+
+/** {@code GET /me/stats} e {@code GET /users/{username}/stats}; {@code spending} só vem se for visível. */
+export interface Stats {
+  year?: number
   total: number
   byStatus: Record<EntryStatus, number>
+  finishedByYear: { year: number; count: number }[]
+  byGenre: NamedCount[]
+  byPlatform: NamedCount[]
+  ratingDistribution: { stars: number; count: number }[]
+  averageRating?: number
   hoursPlayed: number
+  spending?: Spending[]
+}
+
+export interface LibraryCounts {
+  played: number
+  playing: number
+  backlog: number
+  wishlist: number
+  dropped: number
+  favorites: number
+  reviews: number
+}
+
+/** Num perfil privado, só username, displayName e {@code private}. */
+export interface Profile {
+  username: string
+  displayName: string | null
+  private: boolean
+  bio?: string
+  gender?: Gender
+  memberSince?: string
+  counts?: LibraryCounts
 }
 
 export interface TokenResponse {

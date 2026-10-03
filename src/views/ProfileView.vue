@@ -1,33 +1,121 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
+import { ApiError } from '@/api/client'
+import { getMyCounts } from '@/api/me'
+import { getProfile } from '@/api/users'
 import AppWindow from '@/components/AppWindow.vue'
+import ErrorMessage from '@/components/ErrorMessage.vue'
 import TabPanel from '@/components/TabPanel.vue'
+import { formatDate, formatNumber } from '@/lib/format'
+import { genderLabel } from '@/lib/labels'
+import { useProfileSource } from '@/lib/profileSource'
 import { profileTabs } from '@/router/tabs'
+import { useAuthStore } from '@/stores/auth'
+import type { LibraryCounts, Profile } from '@/types/api'
 
 const props = defineProps<{ username: string }>()
+const username = toRef(props, 'username')
+
+const auth = useAuthStore()
+const { isOwner } = useProfileSource(username)
+
+const {
+  data: publicProfile,
+  error,
+  refetch,
+} = useQuery({
+  queryKey: ['profile', username, 'header'],
+  queryFn: () => getProfile(username.value),
+  enabled: computed(() => !isOwner.value),
+})
+const { data: myCounts } = useQuery({
+  queryKey: ['me', computed(() => auth.user?.id), 'counts'],
+  queryFn: getMyCounts,
+  enabled: isOwner,
+})
+
+/** O dono vê os próprios dados (de /me) mesmo com o perfil privado. */
+const profile = computed<Profile | undefined>(() => {
+  const me = auth.user
+  if (!isOwner.value || !me) return publicProfile.value
+  return {
+    username: me.username,
+    displayName: me.displayName,
+    private: me.profileVisibility === 'PRIVATE',
+    bio: me.bio ?? undefined,
+    gender: me.gender ?? undefined,
+    memberSince: me.createdAt?.slice(0, 10),
+    counts: myCounts.value,
+  }
+})
+
+/** RN14: o gênero aparece só se a pessoa informou. */
+const handle = computed(() => {
+  const value = profile.value
+  if (!value) return ''
+  return value.gender ? `@${value.username} · ${genderLabel[value.gender]}` : `@${value.username}`
+})
+
+const notFound = computed(
+  () => error.value instanceof ApiError && error.value.problem.status === 404,
+)
+const locked = computed(() => profile.value?.private && !isOwner.value)
+
+const COUNTERS: [keyof LibraryCounts, string][] = [
+  ['played', 'Jogados'],
+  ['playing', 'Jogando'],
+  ['backlog', 'Quero jogar'],
+  ['wishlist', 'Lista de desejos'],
+  ['favorites', 'Favoritos'],
+  ['reviews', 'Avaliações'],
+]
 
 const tabs = computed(() =>
   profileTabs.map(({ name, label }) => ({
     label,
-    to: { name, params: { username: props.username } },
+    to: { name, params: { username: username.value } },
   })),
 )
-
-const counters = ['Jogados', 'Jogando', 'Quero jogar', 'Favoritos', 'Avaliações']
 </script>
 
 <template>
   <AppWindow :title="`${username}.exe`">
-    <header class="header">
-      <h2>@{{ username }}</h2>
-      <dl class="counters">
-        <div v-for="counter in counters" :key="counter">
-          <dt>{{ counter }}</dt>
-          <dd>—</dd>
-        </div>
-      </dl>
-    </header>
-    <TabPanel :tabs="tabs"><RouterView /></TabPanel>
+    <div v-if="notFound" class="not-found">
+      <span class="error-icon" aria-hidden="true">×</span>
+      <p class="prose">
+        Ninguém usa o username <b>{{ username }}</b
+        >.
+      </p>
+    </div>
+    <ErrorMessage v-else-if="error" @retry="refetch()">
+      Não foi possível carregar o perfil. {{ error.message }}
+    </ErrorMessage>
+
+    <template v-else-if="profile">
+      <header class="header">
+        <h2>{{ profile.displayName ?? profile.username }}</h2>
+        <p class="prose handle">{{ handle }}</p>
+        <p v-if="profile.bio" class="prose bio">{{ profile.bio }}</p>
+        <p v-if="profile.memberSince" class="prose since">
+          Membro desde {{ formatDate(profile.memberSince) }}
+        </p>
+        <dl v-if="profile.counts" class="counters">
+          <div v-for="[key, label] in COUNTERS" :key="key">
+            <dt>{{ label }}</dt>
+            <dd>{{ formatNumber(profile.counts[key]) }}</dd>
+          </div>
+        </dl>
+      </header>
+
+      <p v-if="locked" class="locked prose">Este perfil é privado.</p>
+      <template v-else>
+        <p v-if="profile.private" class="prose notice">
+          Seu perfil está privado: só você vê as abas.
+        </p>
+        <TabPanel :tabs="tabs"><RouterView /></TabPanel>
+      </template>
+    </template>
   </AppWindow>
 </template>
 
@@ -35,12 +123,27 @@ const counters = ['Jogados', 'Jogando', 'Quero jogar', 'Favoritos', 'Avaliaçõe
 .header {
   display: grid;
   justify-items: center;
-  gap: 12px;
+  gap: 6px;
   padding-bottom: 16px;
+  text-align: center;
 }
 
 h2 {
-  font-size: 22px;
+  font-size: 24px;
+}
+
+p {
+  margin: 0;
+}
+
+.handle,
+.since {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.bio {
+  max-width: 60ch;
 }
 
 .counters {
@@ -48,7 +151,7 @@ h2 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px 24px;
-  margin: 0;
+  margin: 8px 0 0;
 }
 
 .counters div {
@@ -57,8 +160,31 @@ h2 {
   align-items: center;
 }
 
-dd {
+.counters dt {
+  font-size: 13px;
+}
+
+.counters dd {
   margin: 0;
-  font: 700 20px var(--font-text);
+  font: 18px var(--font-display);
+}
+
+.locked,
+.notice {
+  padding: 10px 12px;
+  background: var(--field);
+  box-shadow: var(--sunken);
+  text-align: center;
+}
+
+.notice {
+  margin-bottom: 12px;
+  background: var(--yellow);
+}
+
+.not-found {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 </style>

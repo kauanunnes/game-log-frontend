@@ -4,3 +4,7 @@ const longDate = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long', timeZone:
 export const formatDate = (isoDate: string) => longDate.format(new Date(isoDate))
 
 export const formatNumber = (value: number) => value.toLocaleString('pt-BR')
+
+/** "83.98" em BRL → "R$ 83,98". */
+export const formatMoney = (amount: string, currency: string) =>
+  Number(amount).toLocaleString('pt-BR', { style: 'currency', currency })

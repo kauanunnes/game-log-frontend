@@ -5,7 +5,8 @@ import { statusLabel } from '@/lib/labels'
 import type { PublicReview } from '@/types/api'
 import StarRating from './StarRating.vue'
 
-defineProps<{ review: PublicReview }>()
+/** @param showGame mostra o jogo em vez do autor (lista de uma pessoa só). */
+defineProps<{ review: PublicReview; showGame?: boolean }>()
 
 const revealed = ref(false)
 </script>
@@ -13,7 +14,10 @@ const revealed = ref(false)
 <template>
   <article class="review">
     <header class="meta">
-      <RouterLink :to="{ name: 'profile', params: { username: review.user.username } }">
+      <RouterLink v-if="showGame" :to="{ name: 'game', params: { slug: review.game.slug } }">
+        {{ review.game.title }}
+      </RouterLink>
+      <RouterLink v-else :to="{ name: 'profile', params: { username: review.user.username } }">
         {{ review.user.displayName ?? review.user.username }}
       </RouterLink>
       <StarRating

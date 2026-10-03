@@ -1,10 +1,13 @@
-import type { EntryStatus, LibraryEntry, LibraryEntryRequest, MyStats, Page } from '@/types/api'
+import type { LibraryCounts, LibraryEntry, LibraryEntryRequest, Page, Stats } from '@/types/api'
 import { ApiError, api } from './client'
+import { libraryQuery, type LibraryQuery } from './users'
 
-export const getMyStats = () => api<MyStats>('/me/stats')
+export const getMyStats = () => api<Stats>('/me/stats')
 
-export const listMyLibrary = (status: EntryStatus, size: number) =>
-  api<Page<LibraryEntry>>(`/me/library?status=${status}&size=${size}`)
+export const getMyCounts = () => api<LibraryCounts>('/me/library/counts')
+
+export const listMyLibrary = (query: LibraryQuery) =>
+  api<Page<LibraryEntry>>(`/me/library?${libraryQuery(query)}`)
 
 /** A entrada do jogo na minha biblioteca, ou {@code null} se ele ainda não está lá. */
 export async function getMyEntry(gameId: number): Promise<LibraryEntry | null> {

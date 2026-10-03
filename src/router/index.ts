@@ -10,6 +10,22 @@ declare module 'vue-router' {
 }
 
 const Placeholder = () => import('@/views/PlaceholderView.vue')
+const LibraryTab = () => import('@/views/profile/ProfileLibraryTab.vue')
+
+/** O componente de cada aba do perfil; as abas de jogos mudam só o filtro. */
+const profileViews: Record<string, Pick<RouteRecordRaw, 'component' | 'props'>> = {
+  profile: { component: () => import('@/views/profile/ProfileOverview.vue') },
+  'profile-played': {
+    component: LibraryTab,
+    props: { statuses: ['PLAYED', 'DROPPED'], variants: true },
+  },
+  'profile-playing': { component: LibraryTab, props: { statuses: ['PLAYING'] } },
+  'profile-backlog': { component: LibraryTab, props: { statuses: ['BACKLOG'] } },
+  'profile-wishlist': { component: LibraryTab, props: { statuses: ['WISHLIST'] } },
+  'profile-favorites': { component: LibraryTab, props: { favorites: true } },
+  'profile-reviews': { component: () => import('@/views/profile/ProfileReviewsTab.vue') },
+  'profile-stats': { component: () => import('@/views/profile/ProfileStatsTab.vue') },
+}
 
 const tabRoutes = (tabs: Tab[], section: string): RouteRecordRaw[] =>
   tabs.map(({ path, name, label }) => ({
@@ -43,7 +59,12 @@ const routes: RouteRecordRaw[] = [
     path: '/u/:username',
     component: () => import('@/views/ProfileView.vue'),
     props: true,
-    children: tabRoutes(profileTabs, 'Perfil'),
+    children: profileTabs.map(({ path, name, label }) => ({
+      path,
+      name,
+      ...profileViews[name],
+      meta: { title: `Perfil · ${label}` },
+    })) as RouteRecordRaw[],
   },
   {
     path: '/settings',
