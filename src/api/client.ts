@@ -1,0 +1,60 @@
+import type { ProblemDetail, TokenResponse } from '@/types/api'
+
+type ApiInit = Omit<RequestInit, 'body'> & { body?: unknown }
+
+const BASE_URL = '/api/v1'
+
+let accessToken: string | null = null
+let refreshing: Promise<boolean> | null = null
+
+export class ApiError extends Error {
+  constructor(readonly problem: ProblemDetail) {
+    super(problem.detail ?? problem.title)
+  }
+}
+
+export function setAccessToken(token: string | null) {
+  accessToken = token
+}
+
+function send(path: string, { body, ...init }: ApiInit = {}) {
+  const headers = new Headers(init.headers)
+  if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+  if (body !== undefined) headers.set('Content-Type', 'application/json')
+  return fetch(BASE_URL + path, {
+    ...init,
+    headers,
+    body: body === undefined ? undefined : JSON.stringify(body),
+  })
+}
+
+export function refreshSession(): Promise<boolean> {
+  refreshing ??= send('/auth/refresh', { method: 'POST' })
+    .then(async (res) => {
+      setAccessToken(res.ok ? ((await res.json()) as TokenResponse).accessToken : null)
+      return res.ok
+    })
+    .catch(() => false)
+    .finally(() => {
+      refreshing = null
+    })
+  return refreshing
+}
+
+async function toProblem(res: Response): Promise<ProblemDetail> {
+  const fallback: ProblemDetail = {
+    type: 'about:blank',
+    title:
+      res.status >= 500 ? 'Servidor indisponível. Tente de novo em instantes.' : 'Erro inesperado.',
+    status: res.status,
+  }
+  if (!res.headers.get('Content-Type')?.includes('json')) return fallback
+  return { ...fallback, ...((await res.json()) as Partial<ProblemDetail>) }
+}
+
+export async function api<T>(path: string, init?: ApiInit): Promise<T> {
+  let res = await send(path, init)
+  if (res.status === 401 && accessToken && (await refreshSession())) res = await send(path, init)
+  if (!res.ok) throw new ApiError(await toProblem(res))
+  return (res.status === 204 ? undefined : await res.json()) as T
+}

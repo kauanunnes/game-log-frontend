@@ -1,0 +1,171 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  padding-bottom: var(--taskbar-height);
+  background:
+    linear-gradient(rgb(255 255 255 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 6%) 1px, transparent 1px), var(--desktop);
+  background-size: 16px 16px;
+  color: var(--text);
+  font: 16px/1.4 var(--font-ui);
+  scrollbar-color: var(--gray) var(--light);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--link);
+}
+
+a:visited {
+  color: var(--link-visited);
+}
+
+::selection {
+  background: var(--navy);
+  color: var(--white);
+}
+
+mark {
+  padding: 0 2px;
+  background: var(--highlight);
+  color: inherit;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 75px;
+  min-height: 28px;
+  padding: 2px 14px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: var(--raised);
+  font: inherit;
+  cursor: pointer;
+}
+
+button,
+.button:is(:link, :visited) {
+  color: var(--text);
+  text-decoration: none;
+}
+
+button:active:not(:disabled),
+.button:active {
+  box-shadow: var(--pressed);
+  padding: 3px 13px 1px 15px;
+}
+
+button:disabled {
+  color: var(--gray);
+  text-shadow: 1px 1px var(--white);
+  cursor: default;
+}
+
+:focus-visible {
+  outline: 1px dotted var(--black);
+  outline-offset: 1px;
+}
+
+:is(button, .button):focus-visible {
+  outline-offset: -5px;
+}
+
+input,
+select,
+textarea {
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 0;
+  background: var(--field);
+  box-shadow: var(--sunken);
+  color: var(--text);
+  font: 15px var(--font-text);
+  accent-color: var(--navy);
+}
+
+:is(input, select, textarea):focus-visible {
+  outline-offset: -4px;
+}
+
+fieldset {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 12px;
+  border: 0;
+  box-shadow: var(--etched);
+}
+
+legend {
+  padding: 0 4px;
+  background: var(--surface);
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.form label {
+  display: grid;
+  gap: 4px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.error {
+  margin: 0;
+  color: var(--red);
+  font-family: var(--font-text);
+}
+
+.prose {
+  font-family: var(--font-text);
+}
+
+.narrow {
+  justify-self: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
