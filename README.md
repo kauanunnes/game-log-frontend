@@ -1,5 +1,7 @@
 # Game Log · Front-end
 
+[![CI](https://github.com/kauanunnes/game-log-frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/kauanunnes/game-log-frontend/actions/workflows/ci.yml)
+
 Front-end do Game Log, um diário de jogos com cara de Windows 95. A API e a documentação do projeto (requisitos, telas, roadmap) ficam no repositório do back-end, em `docs/`.
 
 ## Stack
@@ -24,6 +26,8 @@ Abre em `http://localhost:5173`. As chamadas para `/api` vão para a API em `htt
 | `pnpm test:unit` | Testes com Vitest |
 | `pnpm lint` | Oxlint e ESLint |
 | `pnpm format` | Prettier |
+
+O CI roda, a cada push e PR, o lint, o Prettier, a checagem de tipos, os testes e o build.
 
 ## Estrutura
 
