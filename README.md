@@ -35,13 +35,21 @@ O CI roda, a cada push e PR, o lint, o Prettier, a checagem de tipos, os testes 
 src/
 ├── api/          cliente HTTP (token em memória, refresh automático no 401) e um arquivo por recurso
 ├── components/   janela, barra de tarefas, nota em estrelas, card de jogo...
-├── lib/          rótulos em português dos enums da API e filtros da URL
+├── lib/          rótulos dos enums, formatação, filtros da URL, tabela da RN02 e composables
 ├── router/       rotas, abas e guarda de login
 ├── stores/       Pinia: sessão
 ├── styles/       tokens de design e estilos base
 ├── types/        tipos da API
-└── views/        uma view por rota
+└── views/        uma view por rota; as abas do perfil e das configurações em subpastas
 ```
+
+## Telas
+
+- **Início:** jogos em alta na semana e avaliações recentes.
+- **Explorar:** busca no catálogo com filtros de gênero, plataforma e ano, e ordenação.
+- **Jogo:** dados do IGDB, números da comunidade, avaliações e o registro na biblioteca.
+- **Perfil:** abas de jogados, jogando, quero jogar, desejos, favoritos, avaliações e estatísticas.
+- **Configurações:** perfil, senha, privacidade e exclusão da conta.
 
 ## Visual
 
