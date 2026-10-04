@@ -31,12 +31,20 @@ export function searchGames(search: GameSearch, signal?: AbortSignal) {
 
 export const getGame = (slug: string) => api<GameDetails>(`/games/${encodeURIComponent(slug)}`)
 
+export type ReviewSort = 'recent' | 'likes'
+
 /** @param page começa em 0 */
-export const listGameReviews = (slug: string, page: number) =>
-  api<Page<PublicReview>>(`/games/${encodeURIComponent(slug)}/reviews?page=${page}&size=10`)
+export const listGameReviews = (slug: string, page: number, sort: ReviewSort = 'recent') =>
+  api<Page<PublicReview>>(
+    `/games/${encodeURIComponent(slug)}/reviews?page=${page}&size=10&sort=${sort}`,
+  )
 
 /** As avaliações mais recentes do site todo (só de perfis públicos). */
 export const listRecentReviews = (size: number) => api<Page<PublicReview>>(`/reviews?size=${size}`)
+
+export const likeReview = (id: number) => api<void>(`/reviews/${id}/like`, { method: 'PUT' })
+
+export const unlikeReview = (id: number) => api<void>(`/reviews/${id}/like`, { method: 'DELETE' })
 
 export const listGenres = () => api<Genre[]>('/genres')
 

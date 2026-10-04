@@ -6,6 +6,7 @@ import type {
   Me,
   Page,
   Profile,
+  PublicReview,
   Stats,
 } from '@/types/api'
 import { ApiError, api } from './client'
@@ -29,6 +30,13 @@ export const changeMyPassword = (currentPassword: string, newPassword: string) =
 
 export const deleteMe = (password: string) =>
   api<void>('/me', { method: 'DELETE', body: { password } })
+
+/** @param page começa em 0 */
+export const listMyReviews = (page: number) =>
+  api<Page<PublicReview>>(`/me/reviews?page=${page}&size=10`)
+
+/** Quais destas avaliações eu curti. */
+export const getMyLikes = (ids: number[]) => api<number[]>(`/me/likes?entryIds=${ids.join(',')}`)
 
 const FEED_PAGE = 20
 

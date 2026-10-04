@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, toRef, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { keepPreviousData, useQuery } from '@tanstack/vue-query'
 import { ApiError } from '@/api/client'
-import { getGame, listGameReviews } from '@/api/games'
+import { getGame, listGameReviews, type ReviewSort } from '@/api/games'
 import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
 import LibraryActions from '@/components/LibraryActions.vue'
@@ -13,6 +13,7 @@ import ReviewCard from '@/components/ReviewCard.vue'
 import StarRating from '@/components/StarRating.vue'
 import { formatDate, formatNumber } from '@/lib/format'
 import { kindLabel } from '@/lib/labels'
+import { useLikedReviews } from '@/lib/likes'
 
 const props = defineProps<{ slug: string }>()
 const slug = toRef(props, 'slug')
@@ -27,18 +28,27 @@ const {
   queryFn: () => getGame(slug.value),
 })
 
-/** As avaliações paginam pela URL: {@code ?page=2}. */
+/** As avaliações paginam e ordenam pela URL: {@code ?page=2&sort=likes}. */
 const route = useRoute()
+const router = useRouter()
 const reviewPage = computed(() => Math.max(1, Number(route.query.page) || 1))
+const reviewSort = computed<ReviewSort>({
+  get: () => (route.query.sort === 'likes' ? 'likes' : 'recent'),
+  set: (sort) =>
+    router.replace({
+      query: { ...route.query, sort: sort === 'recent' ? undefined : sort, page: undefined },
+    }),
+})
 const {
   data: reviews,
   error: reviewsError,
   refetch: refetchReviews,
 } = useQuery({
-  queryKey: ['game-reviews', slug, reviewPage],
-  queryFn: () => listGameReviews(slug.value, reviewPage.value - 1),
+  queryKey: ['game-reviews', slug, reviewSort, reviewPage],
+  queryFn: () => listGameReviews(slug.value, reviewPage.value - 1, reviewSort.value),
   placeholderData: keepPreviousData,
 })
+const liked = useLikedReviews(computed(() => reviews.value?.content))
 
 const notFound = computed(
   () => error.value instanceof ApiError && error.value.problem.status === 404,
@@ -194,6 +204,13 @@ watchEffect(() => {
 
       <fieldset>
         <legend>Avaliações</legend>
+        <label v-if="reviews && reviews.page.totalElements > 1" class="sort">
+          Ordenar por
+          <select v-model="reviewSort">
+            <option value="recent">Mais recentes</option>
+            <option value="likes">Mais curtidas</option>
+          </select>
+        </label>
         <ErrorMessage v-if="reviewsError" @retry="refetchReviews()">
           Não foi possível carregar as avaliações.
         </ErrorMessage>
@@ -201,8 +218,8 @@ watchEffect(() => {
           Ainda não há avaliações públicas deste jogo.
         </p>
         <ul v-else-if="reviews" class="reviews">
-          <li v-for="review in reviews.content" :key="review.user.username">
-            <ReviewCard :review="review" />
+          <li v-for="review in reviews.content" :key="review.id">
+            <ReviewCard :review="review" :liked="liked.has(review.id)" />
           </li>
         </ul>
         <PageNav
@@ -340,6 +357,14 @@ fieldset {
 .numbers dd {
   margin: 0;
   font: 20px var(--font-display);
+}
+
+.sort {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 8px;
+  font-size: 14px;
 }
 
 .reviews {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { listRecentReviews, searchGames } from '@/api/games'
 import AppWindow from '@/components/AppWindow.vue'
@@ -8,6 +9,7 @@ import GameCardSkeleton from '@/components/GameCardSkeleton.vue'
 import GameRow from '@/components/GameRow.vue'
 import PixelStar from '@/components/PixelStar.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
+import { useLikedReviews } from '@/lib/likes'
 import { useAuthStore } from '@/stores/auth'
 
 const TRENDING = 12
@@ -34,6 +36,7 @@ const {
   queryKey: ['reviews', 'recent'],
   queryFn: () => listRecentReviews(REVIEWS),
 })
+const liked = useLikedReviews(computed(() => reviews.value?.content))
 </script>
 
 <template>
@@ -96,12 +99,12 @@ const {
         <RouterLink :to="{ name: 'explore' }">Que tal escrever a primeira?</RouterLink>
       </p>
       <ul v-else class="feed">
-        <li v-for="review in reviews.content" :key="`${review.user.username}/${review.game.slug}`">
+        <li v-for="review in reviews.content" :key="review.id">
           <GameRow :game="review.game">
             <RouterLink class="title" :to="{ name: 'game', params: { slug: review.game.slug } }">
               {{ review.game.title }}
             </RouterLink>
-            <ReviewCard :review="review" />
+            <ReviewCard :review="review" :liked="liked.has(review.id)" />
           </GameRow>
         </li>
       </ul>

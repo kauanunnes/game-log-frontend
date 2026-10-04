@@ -31,6 +31,7 @@ const celeste: GameSummary = {
 }
 
 const review: PublicReview = {
+  id: 1,
   user: { username: 'ana', displayName: 'Ana' },
   game: celeste,
   status: 'PLAYED',
@@ -39,6 +40,7 @@ const review: PublicReview = {
   text: 'Difícil e justo.',
   hasSpoilers: false,
   reviewedAt: '2026-10-02T12:00:00Z',
+  likes: 3,
 }
 
 /** Responde pelo caminho com a query; o resto recebe uma página vazia. */
@@ -58,6 +60,7 @@ async function mountHome() {
       { path: '/games', name: 'explore', component: blank },
       { path: '/games/:slug', name: 'game', component: blank },
       { path: '/signup', name: 'signup', component: blank },
+      { path: '/login', name: 'login', component: blank },
       { path: '/u/:username', name: 'profile', component: blank },
       { path: '/u/:username/playing', name: 'profile-playing', component: blank },
     ],
@@ -83,6 +86,7 @@ describe('HomeView', () => {
     await vi.waitFor(() => expect(wrapper.find('.feed').text()).toContain('Difícil e justo.'))
     expect(wrapper.find('.feed .title').text()).toBe('Celeste')
     expect(wrapper.find('.feed .meta').text()).toContain('Ana')
+    expect(wrapper.find('.feed .like').text()).toContain('3 curtidas')
     expect(wrapper.find('a.more').attributes('href')).toBe('/games?sort=trending')
   })
 

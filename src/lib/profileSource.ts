@@ -1,10 +1,11 @@
 import { computed, type Ref } from 'vue'
-import { getMyProfile, getMyStats, listMyFollows, listMyLibrary } from '@/api/me'
+import { getMyProfile, getMyStats, listMyFollows, listMyLibrary, listMyReviews } from '@/api/me'
 import {
   getProfile,
   getUserStats,
   listUserFollows,
   listUserLibrary,
+  listUserReviews,
   type FollowList,
   type LibraryQuery,
 } from '@/api/users'
@@ -25,5 +26,7 @@ export function useProfileSource(username: Ref<string>) {
     library: (query: LibraryQuery) =>
       isOwner.value ? listMyLibrary(query) : listUserLibrary(username.value, query),
     stats: () => (isOwner.value ? getMyStats() : getUserStats(username.value)),
+    reviews: (page: number) =>
+      isOwner.value ? listMyReviews(page) : listUserReviews(username.value, page),
   }
 }

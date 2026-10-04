@@ -65,6 +65,8 @@ export interface Community {
 }
 
 export interface PublicReview {
+  /** Da entrada da biblioteca; é por ele que se curte. */
+  id: number
   user: { username: string; displayName: string | null }
   game: GameSummary
   status: EntryStatus
@@ -73,6 +75,7 @@ export interface PublicReview {
   text: string
   hasSpoilers: boolean
   reviewedAt: string
+  likes: number
 }
 
 export interface Review {

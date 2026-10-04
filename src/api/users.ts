@@ -1,4 +1,12 @@
-import type { EntryStatus, FollowUser, LibraryEntry, Page, Profile, Stats } from '@/types/api'
+import type {
+  EntryStatus,
+  FollowUser,
+  LibraryEntry,
+  Page,
+  Profile,
+  PublicReview,
+  Stats,
+} from '@/types/api'
 import { ApiError, api } from './client'
 
 export type FollowList = 'followers' | 'following'
@@ -33,6 +41,10 @@ export const listUserLibrary = (username: string, query: LibraryQuery) =>
   api<Page<LibraryEntry>>(`${user(username)}/library?${libraryQuery(query)}`)
 
 export const getUserStats = (username: string) => api<Stats>(`${user(username)}/stats`)
+
+/** @param page começa em 0 */
+export const listUserReviews = (username: string, page: number) =>
+  api<Page<PublicReview>>(`${user(username)}/reviews?page=${page}&size=10`)
 
 /** @param page começa em 0 */
 export const listUserFollows = (username: string, list: FollowList, page: number) =>

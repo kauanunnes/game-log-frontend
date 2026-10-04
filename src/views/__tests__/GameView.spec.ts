@@ -38,7 +38,9 @@ const hollowKnight: GameDetails = {
   },
 }
 
+let nextId = 1
 const review = (username: string, text: string, hasSpoilers = false): PublicReview => ({
+  id: nextId++,
   user: { username, displayName: null },
   game: { id: 2, slug: 'hollow-knight', title: 'Hollow Knight', coverUrl: null, releaseYear: 2017 },
   status: 'PLAYED',
@@ -47,6 +49,7 @@ const review = (username: string, text: string, hasSpoilers = false): PublicRevi
   text,
   hasSpoilers,
   reviewedAt: '2026-09-01T12:00:00Z',
+  likes: 0,
 })
 
 const page = <T>(...content: T[]) => ({
@@ -58,12 +61,11 @@ const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 
 function mountGame(game: Response, reviews: Response = json(page())) {
-  vi.stubGlobal(
-    'fetch',
-    vi.fn<typeof globalThis.fetch>(async (input) =>
-      String(input).includes('/reviews') ? reviews : game,
-    ),
-  )
+  return mountWith(async (input) => (String(input).includes('/reviews') ? reviews : game))
+}
+
+function mountWith(fetch: typeof globalThis.fetch) {
+  vi.stubGlobal('fetch', vi.fn<typeof globalThis.fetch>(fetch))
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [
@@ -82,6 +84,25 @@ function mountGame(game: Response, reviews: Response = json(page())) {
 
 describe('GameView', () => {
   afterEach(() => vi.unstubAllGlobals())
+
+  it('ordena as avaliações pelas mais curtidas pela URL', async () => {
+    const urls: string[] = []
+    const wrapper = mountWith(async (input) => {
+      urls.push(String(input))
+      return String(input).includes('/reviews')
+        ? json(page(review('ana', 'Lindo.'), review('bia', 'Bom.')))
+        : json(hollowKnight)
+    })
+
+    await wrapper.vm.$router.push('/games/hollow-knight')
+    await vi.waitFor(() => expect(wrapper.find('.sort select').exists()).toBe(true))
+    expect(urls).toContain('/api/v1/games/hollow-knight/reviews?page=0&size=10&sort=recent')
+
+    await wrapper.find('.sort select').setValue('likes')
+    await vi.waitFor(() =>
+      expect(urls).toContain('/api/v1/games/hollow-knight/reviews?page=0&size=10&sort=likes'),
+    )
+  })
 
   it('mostra os dados do jogo e liga os gêneros à busca', async () => {
     const wrapper = mountGame(json(hollowKnight))
