@@ -21,6 +21,7 @@ const hollowKnight: GameDetails = {
   developers: ['Team Cherry'],
   publishers: ['Team Cherry'],
   franchises: [],
+  series: [],
   themes: ['Fantasy'],
   modes: [],
   perspectives: [],
@@ -115,6 +116,24 @@ describe('GameView', () => {
     expect(wrapper.find('dl').text()).toContain('Fantasy')
     // sem login, a seção da biblioteca convida a entrar e voltar para cá
     expect(wrapper.find('.library a').attributes('href')).toBe('/login?redirect=/')
+  })
+
+  it('mostra a série só quando ela não repete a franquia', async () => {
+    const wrapper = mountGame(
+      json({
+        ...hollowKnight,
+        franchises: ['Hollow Knight'],
+        series: ['Hollow Knight', 'Metroidvania'],
+      }),
+    )
+
+    await vi.waitFor(() => expect(wrapper.find('dl.facts').exists()).toBe(true))
+    const values = wrapper.findAll('dl.facts dd').map((dd) => dd.text())
+    const facts = Object.fromEntries(
+      wrapper.findAll('dl.facts dt').map((dt, index) => [dt.text(), values[index]]),
+    )
+    expect(facts['Franquia']).toBe('Hollow Knight')
+    expect(facts['Série']).toBe('Metroidvania')
   })
 
   it('mostra os números da comunidade', async () => {

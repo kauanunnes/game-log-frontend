@@ -44,6 +44,8 @@ export interface GameDetails {
   developers: string[]
   publishers: string[]
   franchises: string[]
+  /** As séries do IGDB; muitas vezes repetem a franquia. */
+  series: string[]
   themes: string[]
   modes: string[]
   perspectives: string[]

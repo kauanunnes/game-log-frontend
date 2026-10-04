@@ -61,6 +61,7 @@ const facts = computed(() => {
     ['Desenvolvimento', value.developers],
     ['Publicação', value.publishers],
     ['Franquia', value.franchises],
+    ['Série', value.series.filter((name) => !value.franchises.includes(name))],
     ['Temas', value.themes],
     ['Modos', value.modes],
     ['Perspectiva', value.perspectives],
