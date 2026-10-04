@@ -38,7 +38,7 @@ const games = computed(() => (showingContent.value ? byContent.value : byIgdb.va
     </div>
     <p class="hint">
       <template v-if="showingContent">
-        Gêneros, temas e descrição mais próximos, comparados por embeddings (modelo local, em
+        Gêneros, temas e palavras-chave mais próximos, comparados por embeddings (modelo local, em
         teste).
       </template>
       <template v-else>A lista de jogos parecidos do IGDB.</template>
