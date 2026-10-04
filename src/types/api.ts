@@ -18,6 +18,18 @@ export interface GameSummary {
   releaseYear: number | null
 }
 
+/** Uma sugestão de "Você poderá gostar", com o motivo. */
+export interface Suggestion {
+  game: GameSummary
+  reason: string
+}
+
+export interface Recommendations {
+  suggestions: Suggestion[]
+  /** `false` quando a biblioteca ainda não diz nada do gosto e as sugestões são só os populares. */
+  personalized: boolean
+}
+
 /** Jogos parecidos de dois jeitos, para comparar. */
 export interface SimilarGames {
   /** Vizinhos no espaço de embeddings; `null` quando o jogo ainda não tem vetor. */

@@ -43,6 +43,7 @@ async function mountAt(path: string) {
       { path: '/login', name: 'login', component: empty },
       { path: '/signup', name: 'signup', component: empty },
       { path: '/feed', name: 'feed', component: empty },
+      { path: '/for-you', name: 'for-you', component: empty },
       { path: '/settings/profile', name: 'settings', component: empty },
       { path: '/u/:username', name: 'profile', component: empty },
     ],

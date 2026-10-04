@@ -63,6 +63,7 @@ async function mountHome() {
       { path: '/login', name: 'login', component: blank },
       { path: '/u/:username', name: 'profile', component: blank },
       { path: '/u/:username/playing', name: 'profile-playing', component: blank },
+      { path: '/for-you', name: 'for-you', component: blank },
     ],
   })
   await router.push('/')
@@ -98,7 +99,7 @@ describe('HomeView', () => {
   })
 
   it('com sessão, troca "Criar conta" pelo atalho de Jogando', async () => {
-    stubApi()
+    stubApi({ '/api/v1/me/recommendations': { suggestions: [], personalized: false } })
     useAuthStore().user = {
       id: 1,
       username: 'ana',
@@ -111,5 +112,31 @@ describe('HomeView', () => {
 
     const links = wrapper.findAll('.hero a').map((link) => link.attributes('href'))
     expect(links).toEqual(['/games', '/u/ana/playing'])
+  })
+
+  it('com sessão, mostra as primeiras sugestões de Para você', async () => {
+    const suggestion = { game: celeste, reason: 'Parecido com Hollow Knight, que você favoritou.' }
+    stubApi({
+      '/api/v1/me/recommendations': {
+        suggestions: Array.from({ length: 8 }, (_, i) => ({
+          ...suggestion,
+          game: { ...celeste, id: i + 1 },
+        })),
+        personalized: true,
+      },
+    })
+    useAuthStore().user = {
+      id: 1,
+      username: 'ana',
+      email: 'ana@example.com',
+      displayName: 'Ana',
+      bio: null,
+      gender: null,
+    }
+    const wrapper = await mountHome()
+
+    await vi.waitFor(() => expect(wrapper.findAll('.reason')).toHaveLength(6))
+    expect(wrapper.find('.reason').text()).toBe('Parecido com Hollow Knight, que você favoritou.')
+    expect(wrapper.find('a[href="/for-you"]').exists()).toBe(true)
   })
 })

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { listRecentReviews, searchGames } from '@/api/games'
+import { getMyRecommendations } from '@/api/me'
 import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
 import GameCard from '@/components/GameCard.vue'
@@ -9,11 +10,13 @@ import GameCardSkeleton from '@/components/GameCardSkeleton.vue'
 import GameRow from '@/components/GameRow.vue'
 import PixelStar from '@/components/PixelStar.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
+import SuggestionList from '@/components/SuggestionList.vue'
 import { useLikedReviews } from '@/lib/likes'
 import { useAuthStore } from '@/stores/auth'
 
 const TRENDING = 12
 const REVIEWS = 5
+const SUGGESTIONS = 6
 
 const auth = useAuthStore()
 
@@ -37,6 +40,14 @@ const {
   queryFn: () => listRecentReviews(REVIEWS),
 })
 const liked = useLikedReviews(computed(() => reviews.value?.content))
+
+/** Com sessão, as primeiras sugestões de "Para você", na mesma consulta da tela inteira. */
+const { data: recommendations } = useQuery({
+  queryKey: ['me', computed(() => auth.user?.id), 'recommendations'],
+  queryFn: getMyRecommendations,
+  enabled: computed(() => !!auth.user),
+})
+const suggestions = computed(() => recommendations.value?.suggestions.slice(0, SUGGESTIONS) ?? [])
 </script>
 
 <template>
@@ -65,6 +76,13 @@ const liked = useLikedReviews(computed(() => reviews.value?.content))
       <span>Pronto</span>
       <span>v0.1</span>
     </template>
+  </AppWindow>
+
+  <AppWindow v-if="auth.user && suggestions.length" title="Você poderá gostar.exe">
+    <div class="stack">
+      <SuggestionList :suggestions="suggestions" />
+      <RouterLink class="more" :to="{ name: 'for-you' }">Ver todas em Para você</RouterLink>
+    </div>
   </AppWindow>
 
   <AppWindow title="Em alta.exe">

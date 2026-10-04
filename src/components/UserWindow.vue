@@ -74,6 +74,7 @@ async function logout() {
 
     <nav class="links">
       <RouterLink class="button" :to="{ name: 'feed' }">Feed</RouterLink>
+      <RouterLink class="button" :to="{ name: 'for-you' }">Para você</RouterLink>
       <RouterLink
         class="button"
         :to="{ name: 'profile', params: { username: auth.user.username } }"

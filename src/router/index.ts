@@ -96,6 +96,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Feed', requiresAuth: true },
   },
   {
+    path: '/for-you',
+    name: 'for-you',
+    component: () => import('@/views/ForYouView.vue'),
+    meta: { title: 'Para você', requiresAuth: true },
+  },
+  {
     path: '/u/:username/lists/:listId',
     name: 'list',
     component: () => import('@/views/ListView.vue'),

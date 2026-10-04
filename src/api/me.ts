@@ -12,6 +12,7 @@ import type {
   Page,
   Profile,
   PublicReview,
+  Recommendations,
   Stats,
 } from '@/types/api'
 import { ApiError, api } from './client'
@@ -53,6 +54,9 @@ export const getMyFeed = (page: number) =>
   api<Page<Activity>>(`/me/feed?page=${page}&size=${FEED_PAGE}`)
 
 export const getMyStats = () => api<Stats>('/me/stats')
+
+/** "Você poderá gostar": calculadas na hora, a partir da biblioteca. */
+export const getMyRecommendations = () => api<Recommendations>('/me/recommendations')
 
 /** O mesmo cabeçalho de {@code /users/{username}}, completo mesmo com o perfil privado. */
 export const getMyProfile = () => api<Profile>('/me/profile')
