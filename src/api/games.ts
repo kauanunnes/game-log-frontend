@@ -35,6 +35,9 @@ export const getGame = (slug: string) => api<GameDetails>(`/games/${encodeURICom
 export const listGameReviews = (slug: string, page: number) =>
   api<Page<PublicReview>>(`/games/${encodeURIComponent(slug)}/reviews?page=${page}&size=10`)
 
+/** As avaliações mais recentes do site todo (só de perfis públicos). */
+export const listRecentReviews = (size: number) => api<Page<PublicReview>>(`/reviews?size=${size}`)
+
 export const listGenres = () => api<Genre[]>('/genres')
 
 export const listPlatforms = () => api<Platform[]>('/platforms')

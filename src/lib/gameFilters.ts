@@ -13,7 +13,7 @@ export interface GameFilters {
 
 export const MIN_YEAR = 1950
 export const MAX_YEAR = 2100
-const SORTS: GameSort[] = ['relevance', 'popular', 'rating', 'release', 'title']
+const SORTS: GameSort[] = ['relevance', 'popular', 'trending', 'rating', 'release', 'title']
 
 type QueryValue = LocationQueryValue | LocationQueryValue[] | undefined
 

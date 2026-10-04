@@ -201,16 +201,6 @@ const submitForm = (event: Event) => (event.target as HTMLSelectElement).form?.r
   cursor: progress;
 }
 
-ul.grid {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.grid > li {
-  display: grid;
-}
-
 .stale {
   opacity: 0.5;
 }

@@ -162,14 +162,7 @@ const editedGame = computed(() => editing.value?.game ?? { id: 0, slug: '', titl
   font-size: 14px;
 }
 
-ul.grid {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .grid > li {
-  display: grid;
   align-content: start;
   gap: 4px;
 }

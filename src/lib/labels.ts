@@ -18,6 +18,7 @@ export const genderLabel: Record<Gender, string> = {
 export const sortLabel: Record<GameSort, string> = {
   relevance: 'Relevância',
   popular: 'Mais populares',
+  trending: 'Em alta na semana',
   rating: 'Mais bem avaliados',
   release: 'Mais recentes',
   title: 'Título (A–Z)',

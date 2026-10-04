@@ -78,16 +78,6 @@ const shelves = computed(() => [
   margin: 0;
 }
 
-ul.grid {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.grid > li {
-  display: grid;
-}
-
 .more {
   justify-self: end;
   font-size: 14px;

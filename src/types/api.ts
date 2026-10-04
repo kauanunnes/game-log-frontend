@@ -1,7 +1,7 @@
 export type EntryStatus = 'WISHLIST' | 'BACKLOG' | 'PLAYING' | 'PLAYED' | 'DROPPED'
 export type Gender = 'FEMALE' | 'MALE' | 'NON_BINARY' | 'OTHER'
 export type AcquisitionMethod = 'PURCHASED' | 'GIFT' | 'SUBSCRIPTION' | 'FREE'
-export type GameSort = 'relevance' | 'popular' | 'rating' | 'release' | 'title'
+export type GameSort = 'relevance' | 'popular' | 'trending' | 'rating' | 'release' | 'title'
 export type GameKind =
   'MAIN' | 'EXPANSION' | 'STANDALONE' | 'REMAKE' | 'REMASTER' | 'EXPANDED' | 'PORT'
 

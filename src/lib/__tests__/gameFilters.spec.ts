@@ -40,5 +40,6 @@ describe('effectiveSort', () => {
     expect(effectiveSort({})).toBe('popular')
     expect(effectiveSort({ sort: 'relevance' })).toBe('popular')
     expect(effectiveSort({ q: 'zelda', sort: 'title' })).toBe('title')
+    expect(effectiveSort({ sort: 'trending' })).toBe('trending')
   })
 })

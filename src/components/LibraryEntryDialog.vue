@@ -150,6 +150,7 @@ async function run(action: () => Promise<unknown>) {
       queryClient.invalidateQueries({ queryKey: ['profile'] }),
       queryClient.invalidateQueries({ queryKey: ['game', props.game.slug] }),
       queryClient.invalidateQueries({ queryKey: ['game-reviews', props.game.slug] }),
+      queryClient.invalidateQueries({ queryKey: ['reviews'] }),
     ])
     emit('close')
   } catch (e) {

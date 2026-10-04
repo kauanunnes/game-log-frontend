@@ -1,10 +1,38 @@
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query'
+import { listRecentReviews, searchGames } from '@/api/games'
 import AppWindow from '@/components/AppWindow.vue'
+import ErrorMessage from '@/components/ErrorMessage.vue'
+import GameCard from '@/components/GameCard.vue'
+import GameCardSkeleton from '@/components/GameCardSkeleton.vue'
 import PixelStar from '@/components/PixelStar.vue'
-import UnderConstruction from '@/components/UnderConstruction.vue'
+import ReviewCard from '@/components/ReviewCard.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const TRENDING = 12
+const REVIEWS = 5
+
+const auth = useAuthStore()
 
 /** Recado de quem mandou para cá, como a exclusão da conta. */
 const notice: string | undefined = history.state?.notice
+
+const {
+  data: trending,
+  error: trendingError,
+  refetch: refetchTrending,
+} = useQuery({
+  queryKey: ['games', 'trending'],
+  queryFn: () => searchGames({ sort: 'trending', size: TRENDING }),
+})
+const {
+  data: reviews,
+  error: reviewsError,
+  refetch: refetchReviews,
+} = useQuery({
+  queryKey: ['reviews', 'recent'],
+  queryFn: () => listRecentReviews(REVIEWS),
+})
 </script>
 
 <template>
@@ -13,13 +41,20 @@ const notice: string | undefined = history.state?.notice
     <div class="hero">
       <PixelStar class="star" />
       <h2 class="logo">Game<br />Log</h2>
-      <p class="prose">
+      <p class="prose pitch">
         Registre o que você jogou, o que achou e quanto pagou. Monte sua
         <mark>lista de desejos</mark> e mostre tudo no seu perfil.
       </p>
       <div class="actions">
         <RouterLink class="button" :to="{ name: 'explore' }">Explorar jogos</RouterLink>
-        <RouterLink class="button" :to="{ name: 'signup' }">Criar conta</RouterLink>
+        <RouterLink
+          v-if="auth.user"
+          class="button"
+          :to="{ name: 'profile-playing', params: { username: auth.user.username } }"
+        >
+          Jogando agora
+        </RouterLink>
+        <RouterLink v-else class="button" :to="{ name: 'signup' }">Criar conta</RouterLink>
       </div>
     </div>
     <template #status>
@@ -29,7 +64,56 @@ const notice: string | undefined = history.state?.notice
   </AppWindow>
 
   <AppWindow title="Em alta.exe">
-    <UnderConstruction :items="['Jogos mais adicionados na semana', 'Avaliações recentes']" />
+    <div class="stack">
+      <p class="prose">Os jogos mais adicionados nos últimos 7 dias.</p>
+      <ErrorMessage v-if="trendingError" @retry="refetchTrending()">
+        Não foi possível carregar os jogos. {{ trendingError.message }}
+      </ErrorMessage>
+      <ul v-else-if="!trending" class="grid">
+        <li v-for="n in TRENDING" :key="n"><GameCardSkeleton /></li>
+      </ul>
+      <ul v-else class="grid">
+        <li v-for="game in trending.content" :key="game.id"><GameCard :game="game" /></li>
+      </ul>
+      <RouterLink class="more" :to="{ name: 'explore', query: { sort: 'trending' } }">
+        Ver mais em Explorar
+      </RouterLink>
+    </div>
+  </AppWindow>
+
+  <AppWindow title="Avaliações.exe">
+    <div class="stack">
+      <p class="prose">O que a comunidade escreveu por último.</p>
+      <ErrorMessage v-if="reviewsError" @retry="refetchReviews()">
+        Não foi possível carregar as avaliações. {{ reviewsError.message }}
+      </ErrorMessage>
+      <ul v-else-if="!reviews" class="feed" aria-hidden="true">
+        <li v-for="n in 3" :key="n" class="loading placeholder" />
+      </ul>
+      <p v-else-if="!reviews.content.length" class="prose">
+        Ninguém avaliou um jogo ainda.
+        <RouterLink :to="{ name: 'explore' }">Que tal escrever a primeira?</RouterLink>
+      </p>
+      <ul v-else class="feed">
+        <li v-for="review in reviews.content" :key="`${review.user.username}/${review.game.slug}`">
+          <!-- A capa repete o link do título; fica fora do teclado e do leitor de tela. -->
+          <RouterLink
+            class="cover"
+            :to="{ name: 'game', params: { slug: review.game.slug } }"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <img v-if="review.game.coverUrl" :src="review.game.coverUrl" alt="" loading="lazy" />
+          </RouterLink>
+          <div class="entry">
+            <RouterLink class="title" :to="{ name: 'game', params: { slug: review.game.slug } }">
+              {{ review.game.title }}
+            </RouterLink>
+            <ReviewCard :review="review" />
+          </div>
+        </li>
+      </ul>
+    </div>
   </AppWindow>
 </template>
 
@@ -59,7 +143,7 @@ const notice: string | undefined = history.state?.notice
   text-transform: uppercase;
 }
 
-.prose {
+.pitch {
   max-width: 52ch;
   margin: 0;
 }
@@ -73,5 +157,60 @@ const notice: string | undefined = history.state?.notice
   padding: 10px 12px;
   background: var(--yellow);
   box-shadow: var(--sunken);
+}
+
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+.stack > p {
+  margin: 0;
+}
+
+.more {
+  justify-self: end;
+  font-size: 14px;
+}
+
+.feed {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.feed > li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+
+.cover {
+  aspect-ratio: 3 / 4;
+  background: repeating-conic-gradient(var(--teal) 0 25%, var(--navy) 0 50%) 0 0 / 4px 4px;
+  box-shadow: var(--sunken);
+}
+
+.cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.entry {
+  display: grid;
+  gap: 6px;
+}
+
+.title {
+  font-weight: 700;
+}
+
+.placeholder {
+  height: 96px;
 }
 </style>
