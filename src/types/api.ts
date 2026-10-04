@@ -132,6 +132,7 @@ export interface Me {
   id: number
   username: string
   email: string
+  emailVerified?: boolean
   displayName: string | null
   bio: string | null
   gender: Gender | null

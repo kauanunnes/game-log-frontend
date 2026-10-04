@@ -21,3 +21,14 @@ export const register = (body: Registration) =>
 export const logout = () => api<void>('/auth/logout', { method: 'POST' })
 
 export const getMe = () => api<Me>('/me')
+
+export const verifyEmail = (token: string) =>
+  api<void>('/auth/email/verify', { method: 'POST', body: { token } })
+
+/** Responde igual exista a conta ou não. */
+export const forgotPassword = (email: string) =>
+  api<void>('/auth/password/forgot', { method: 'POST', body: { email } })
+
+/** Encerra todas as sessões da conta. */
+export const resetPassword = (token: string, newPassword: string) =>
+  api<void>('/auth/password/reset', { method: 'POST', body: { token, newPassword } })

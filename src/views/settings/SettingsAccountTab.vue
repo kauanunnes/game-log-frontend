@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { changeMyPassword } from '@/api/me'
+import { changeMyPassword, resendVerification } from '@/api/me'
 import { useSubmit } from '@/lib/useSubmit'
 import { useAuthStore } from '@/stores/auth'
 import type { Me } from '@/types/api'
@@ -18,6 +18,13 @@ const { busy, error, done, submit } = useSubmit(async () => {
   Object.assign(form, empty)
 })
 
+const {
+  busy: resending,
+  error: resendError,
+  done: resent,
+  submit: resend,
+} = useSubmit(resendVerification)
+
 function send() {
   if (form.next === form.confirmation) return submit()
   done.value = false
@@ -29,8 +36,24 @@ function send() {
   <div class="account">
     <fieldset>
       <legend>E-mail</legend>
-      <p class="prose email">{{ me.email }}</p>
-      <small class="hint">A troca de e-mail chega junto com a confirmação por e-mail.</small>
+      <p class="prose email">
+        {{ me.email }}
+        <mark :class="{ no: !me.emailVerified }">
+          {{ me.emailVerified ? 'Confirmado' : 'Não confirmado' }}
+        </mark>
+      </p>
+      <template v-if="!me.emailVerified">
+        <p v-if="resendError" class="error" role="alert">{{ resendError }}</p>
+        <p v-else-if="resent" class="success" role="status">
+          Enviamos um novo link para o seu e-mail. Ele vale por 24 horas.
+        </p>
+        <div class="actions">
+          <button type="button" :disabled="resending || resent" @click="resend">
+            Reenviar confirmação
+          </button>
+        </div>
+      </template>
+      <small class="hint">A troca de e-mail ainda não está disponível.</small>
     </fieldset>
 
     <fieldset>
@@ -85,5 +108,13 @@ function send() {
 .email {
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+mark {
+  font: 12px var(--font-text);
+}
+
+mark.no {
+  background: var(--light);
 }
 </style>

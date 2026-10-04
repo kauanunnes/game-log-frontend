@@ -9,6 +9,9 @@ const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 
+/** Recado de quem mandou para cá, como a redefinição de senha. */
+const notice: string | undefined = history.state?.notice
+
 const form = reactive({ login: '', password: '' })
 const error = ref<string | null>(null)
 const loading = ref(false)
@@ -32,6 +35,7 @@ async function submit() {
 
 <template>
   <AppWindow title="Entrar.exe" class="narrow">
+    <p v-if="notice" class="prose success" role="status">{{ notice }}</p>
     <form class="form" @submit.prevent="submit">
       <label>
         Usuário ou e-mail
@@ -46,7 +50,8 @@ async function submit() {
         <button type="submit" :disabled="loading">Entrar</button>
       </div>
       <p class="prose">
-        Não tem conta? <RouterLink :to="{ name: 'signup' }">Criar conta</RouterLink>
+        <RouterLink :to="{ name: 'forgot-password' }">Esqueci minha senha</RouterLink> · Não tem
+        conta? <RouterLink :to="{ name: 'signup' }">Criar conta</RouterLink>
       </p>
     </form>
   </AppWindow>

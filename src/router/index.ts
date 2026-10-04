@@ -124,6 +124,24 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Entrar' },
   },
   {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/views/ForgotPasswordView.vue'),
+    meta: { title: 'Esqueci a senha' },
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('@/views/ResetPasswordView.vue'),
+    meta: { title: 'Nova senha' },
+  },
+  {
+    path: '/verify-email',
+    name: 'verify-email',
+    component: () => import('@/views/VerifyEmailView.vue'),
+    meta: { title: 'Confirmar e-mail' },
+  },
+  {
     path: '/signup',
     name: 'signup',
     component: () => import('@/views/SignupView.vue'),

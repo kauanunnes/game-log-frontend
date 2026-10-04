@@ -98,3 +98,6 @@ export const deleteList = (id: number) => api<void>(`/me/lists/${id}`, { method:
 /** Até 5 favoritos em destaque, na ordem do array; lista vazia tira todos. */
 export const setFeatured = (gameIds: number[]) =>
   api<GameSummary[]>('/me/library/featured', { method: 'PUT', body: { gameIds } })
+
+/** Manda o link de confirmação de novo (um por minuto). */
+export const resendVerification = () => api<void>('/me/email/verification', { method: 'POST' })
