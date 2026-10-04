@@ -7,6 +7,7 @@ import type {
   Platform,
   PublicReview,
   ReportReason,
+  SimilarGames,
   Store,
 } from '@/types/api'
 import { api } from './client'
@@ -31,6 +32,9 @@ export function searchGames(search: GameSearch, signal?: AbortSignal) {
 }
 
 export const getGame = (slug: string) => api<GameDetails>(`/games/${encodeURIComponent(slug)}`)
+
+export const getSimilarGames = (slug: string) =>
+  api<SimilarGames>(`/games/${encodeURIComponent(slug)}/similar`)
 
 export type ReviewSort = 'recent' | 'likes'
 

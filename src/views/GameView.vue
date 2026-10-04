@@ -10,6 +10,7 @@ import LibraryActions from '@/components/LibraryActions.vue'
 import PageNav from '@/components/PageNav.vue'
 import RatingHistogram from '@/components/RatingHistogram.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
+import SimilarGames from '@/components/SimilarGames.vue'
 import StarRating from '@/components/StarRating.vue'
 import { formatDate, formatNumber } from '@/lib/format'
 import { kindLabel } from '@/lib/labels'
@@ -229,6 +230,8 @@ watchEffect(() => {
           :total-pages="reviews.page.totalPages"
         />
       </fieldset>
+
+      <SimilarGames :slug="slug" />
     </template>
 
     <template v-if="game" #status>

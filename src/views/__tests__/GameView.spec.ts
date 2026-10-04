@@ -61,8 +61,14 @@ const page = <T>(...content: T[]) => ({
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 
-function mountGame(game: Response, reviews: Response = json(page())) {
-  return mountWith(async (input) => (String(input).includes('/reviews') ? reviews : game))
+const noSimilar = () => json({ byContent: null, byIgdb: [] })
+
+function mountGame(game: Response, reviews: Response = json(page()), similar = noSimilar()) {
+  return mountWith(async (input) => {
+    const url = String(input)
+    if (url.includes('/similar')) return similar
+    return url.includes('/reviews') ? reviews : game
+  })
 }
 
 function mountWith(fetch: typeof globalThis.fetch) {
@@ -90,6 +96,7 @@ describe('GameView', () => {
     const urls: string[] = []
     const wrapper = mountWith(async (input) => {
       urls.push(String(input))
+      if (String(input).includes('/similar')) return noSimilar()
       return String(input).includes('/reviews')
         ? json(page(review('ana', 'Lindo.'), review('bia', 'Bom.')))
         : json(hollowKnight)
@@ -134,6 +141,44 @@ describe('GameView', () => {
     )
     expect(facts['Franquia']).toBe('Hollow Knight')
     expect(facts['Série']).toBe('Metroidvania')
+  })
+
+  it('mostra os jogos parecidos pelo conteúdo e troca para os do IGDB', async () => {
+    const card = (id: number, slug: string, title: string) => ({
+      id,
+      slug,
+      title,
+      coverUrl: null,
+      releaseYear: 2020,
+    })
+    const similar = json({
+      byContent: [card(10, 'ori', 'Ori'), card(11, 'celeste', 'Celeste')],
+      byIgdb: [card(12, 'dead-cells', 'Dead Cells')],
+    })
+    const wrapper = mountGame(json(hollowKnight), json(page()), similar)
+
+    await vi.waitFor(() => expect(wrapper.find('.similar').exists()).toBe(true))
+    const titles = () => wrapper.findAll('.similar .title').map((title) => title.text())
+    expect(titles()).toEqual(['Ori', 'Celeste'])
+    expect(wrapper.find('.similar [aria-pressed="true"]').text()).toBe('Pelo conteúdo')
+
+    await wrapper.findAll('.similar button')[1]?.trigger('click')
+    expect(titles()).toEqual(['Dead Cells'])
+    expect(wrapper.find('.similar .hint').text()).toContain('IGDB')
+  })
+
+  it('sem vetor, mostra só a lista do IGDB e sem botões', async () => {
+    const similar = json({
+      byContent: null,
+      byIgdb: [
+        { id: 12, slug: 'dead-cells', title: 'Dead Cells', coverUrl: null, releaseYear: 2018 },
+      ],
+    })
+    const wrapper = mountGame(json(hollowKnight), json(page()), similar)
+
+    await vi.waitFor(() => expect(wrapper.find('.similar').exists()).toBe(true))
+    expect(wrapper.find('.similar button').exists()).toBe(false)
+    expect(wrapper.find('.similar .title').text()).toBe('Dead Cells')
   })
 
   it('mostra os números da comunidade', async () => {

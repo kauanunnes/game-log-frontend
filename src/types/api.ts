@@ -18,6 +18,14 @@ export interface GameSummary {
   releaseYear: number | null
 }
 
+/** Jogos parecidos de dois jeitos, para comparar. */
+export interface SimilarGames {
+  /** Vizinhos no espaço de embeddings; `null` quando o jogo ainda não tem vetor. */
+  byContent: GameSummary[] | null
+  /** Os `similar_games` do IGDB que estão no catálogo. */
+  byIgdb: GameSummary[]
+}
+
 export interface Genre {
   id: number
   name: string
