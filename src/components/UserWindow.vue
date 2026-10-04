@@ -73,6 +73,7 @@ async function logout() {
     </fieldset>
 
     <nav class="links">
+      <RouterLink class="button" :to="{ name: 'feed' }">Feed</RouterLink>
       <RouterLink
         class="button"
         :to="{ name: 'profile', params: { username: auth.user.username } }"

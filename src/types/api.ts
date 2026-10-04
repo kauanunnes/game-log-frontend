@@ -195,6 +195,20 @@ export interface Profile {
   counts?: ProfileCounts
 }
 
+export type ActivityType = 'STATUS' | 'REVIEW' | 'FAVORITE'
+
+/** Um item do feed. Em {@code STATUS}, o status daquele momento; nos outros, o atual. */
+export interface Activity {
+  id: number
+  type: ActivityType
+  user: { username: string; displayName: string | null }
+  game: GameSummary
+  status: EntryStatus
+  completed?: boolean
+  review?: Review
+  createdAt: string
+}
+
 /** Uma pessoa da lista de seguidores ou de seguidos. */
 export interface FollowUser {
   username: string

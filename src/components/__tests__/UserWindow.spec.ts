@@ -42,6 +42,7 @@ async function mountAt(path: string) {
       { path: '/games/:slug', name: 'game', component: empty },
       { path: '/login', name: 'login', component: empty },
       { path: '/signup', name: 'signup', component: empty },
+      { path: '/feed', name: 'feed', component: empty },
       { path: '/settings/profile', name: 'settings', component: empty },
       { path: '/u/:username', name: 'profile', component: empty },
     ],
@@ -96,6 +97,7 @@ describe('UserWindow', () => {
     expect(wrapper.find('.counts').text()).toContain('Jogado5')
     expect(link(wrapper, 'Hades')?.attributes('href')).toBe('/games/hades')
     expect(link(wrapper, 'Meu perfil')?.attributes('href')).toBe('/u/ana')
+    expect(link(wrapper, 'Feed')?.attributes('href')).toBe('/feed')
   })
 
   it('sair encerra a sessão e volta para o início', async () => {

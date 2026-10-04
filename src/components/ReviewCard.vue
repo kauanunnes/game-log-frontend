@@ -86,14 +86,6 @@ mark.no {
   overflow-wrap: anywhere;
 }
 
-.spoiler {
-  justify-self: start;
-  background: var(--black);
-  box-shadow: none;
-  color: var(--yellow);
-  font: 13px var(--font-text);
-}
-
 .when {
   color: var(--muted);
   font-size: 12px;

@@ -24,6 +24,7 @@ const links = computed<{ label: string; to: RouteLocationRaw }[]>(() => [
   { label: 'Explorar jogos', to: { name: 'explore' } },
   ...(auth.user
     ? [
+        { label: 'Feed', to: { name: 'feed' } },
         { label: 'Meu perfil', to: { name: 'profile', params: { username: auth.user.username } } },
         { label: 'Configurações', to: { name: 'settings' } },
       ]

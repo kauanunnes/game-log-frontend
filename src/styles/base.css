@@ -157,6 +157,15 @@ legend {
   font: 12px var(--font-text);
 }
 
+/* Esconde o texto de uma avaliação com spoiler até o clique. */
+.spoiler {
+  justify-self: start;
+  background: var(--black);
+  box-shadow: none;
+  color: var(--yellow);
+  font: 13px var(--font-text);
+}
+
 .choice + .hint {
   margin-top: -8px;
 }

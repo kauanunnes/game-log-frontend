@@ -5,6 +5,7 @@ import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
 import GameCard from '@/components/GameCard.vue'
 import GameCardSkeleton from '@/components/GameCardSkeleton.vue'
+import GameRow from '@/components/GameRow.vue'
 import PixelStar from '@/components/PixelStar.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -96,21 +97,12 @@ const {
       </p>
       <ul v-else class="feed">
         <li v-for="review in reviews.content" :key="`${review.user.username}/${review.game.slug}`">
-          <!-- A capa repete o link do título; fica fora do teclado e do leitor de tela. -->
-          <RouterLink
-            class="cover"
-            :to="{ name: 'game', params: { slug: review.game.slug } }"
-            tabindex="-1"
-            aria-hidden="true"
-          >
-            <img v-if="review.game.coverUrl" :src="review.game.coverUrl" alt="" loading="lazy" />
-          </RouterLink>
-          <div class="entry">
+          <GameRow :game="review.game">
             <RouterLink class="title" :to="{ name: 'game', params: { slug: review.game.slug } }">
               {{ review.game.title }}
             </RouterLink>
             <ReviewCard :review="review" />
-          </div>
+          </GameRow>
         </li>
       </ul>
     </div>
@@ -179,31 +171,6 @@ const {
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-.feed > li {
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  align-items: start;
-  gap: 10px;
-}
-
-.cover {
-  aspect-ratio: 3 / 4;
-  background: repeating-conic-gradient(var(--teal) 0 25%, var(--navy) 0 50%) 0 0 / 4px 4px;
-  box-shadow: var(--sunken);
-}
-
-.cover img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.entry {
-  display: grid;
-  gap: 6px;
 }
 
 .title {

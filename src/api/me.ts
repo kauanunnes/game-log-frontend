@@ -1,4 +1,5 @@
 import type {
+  Activity,
   FollowUser,
   LibraryEntry,
   LibraryEntryRequest,
@@ -28,6 +29,12 @@ export const changeMyPassword = (currentPassword: string, newPassword: string) =
 
 export const deleteMe = (password: string) =>
   api<void>('/me', { method: 'DELETE', body: { password } })
+
+const FEED_PAGE = 20
+
+/** @param page começa em 0 */
+export const getMyFeed = (page: number) =>
+  api<Page<Activity>>(`/me/feed?page=${page}&size=${FEED_PAGE}`)
 
 export const getMyStats = () => api<Stats>('/me/stats')
 

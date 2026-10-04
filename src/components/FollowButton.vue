@@ -27,8 +27,9 @@ const {
   const next = !following.value
   await (next ? follow(props.username) : unfollow(props.username))
   queryClient.setQueryData(key.value, next)
-  // Mudam os contadores e as listas dos dois perfis.
+  // Mudam os contadores e as listas dos dois perfis, e o meu feed.
   void queryClient.invalidateQueries({ queryKey: ['profile'] })
+  void queryClient.invalidateQueries({ queryKey: ['me', auth.user?.id, 'feed'] })
 })
 </script>
 

@@ -14,3 +14,22 @@ const CURRENCIES = ['BRL', 'USD', 'EUR', 'GBP', 'JPY', 'ARS']
 /** Moedas dos formulários; uma moeda salva fora da lista entra também. */
 export const currencyOptions = (current?: string) =>
   current && !CURRENCIES.includes(current) ? [current, ...CURRENCIES] : CURRENCIES
+
+const relative = new Intl.RelativeTimeFormat('pt-BR', { numeric: 'auto' })
+const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
+  ['year', 365 * 86_400],
+  ['month', 30 * 86_400],
+  ['week', 7 * 86_400],
+  ['day', 86_400],
+  ['hour', 3_600],
+  ['minute', 60],
+]
+
+/** "há 5 minutos", "ontem", "há 3 semanas"; menos de um minuto é "agora". */
+export function formatRelative(isoInstant: string, now = Date.now()) {
+  const seconds = (new Date(isoInstant).getTime() - now) / 1000
+  for (const [unit, size] of UNITS) {
+    if (Math.abs(seconds) >= size) return relative.format(Math.round(seconds / size), unit)
+  }
+  return 'agora'
+}
