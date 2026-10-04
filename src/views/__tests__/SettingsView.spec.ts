@@ -167,6 +167,33 @@ describe('SettingsView', () => {
     expect(wrapper.text()).toContain('Alterações salvas.')
   })
 
+  it('Dados baixa a exportação num arquivo JSON', async () => {
+    const data = { exportedAt: '2026-10-04T20:00:00Z', account: ana, library: [] }
+    stubApi({ 'GET /api/v1/me/export': () => json(data) })
+    // O jsdom não cria links de arquivo nem baixa nada.
+    const files: Blob[] = []
+    URL.createObjectURL = (file: Blob) => (files.push(file), 'blob:exportacao')
+    URL.revokeObjectURL = vi.fn()
+    let fileName = ''
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      fileName = this.download
+    })
+    const { wrapper } = await mountAt('/settings/data')
+
+    await wrapper.find('button[type="button"]').trigger('click')
+    await flushPromises()
+
+    expect(calls.map(({ method, path }) => `${method} ${path}`)).toEqual(['GET /api/v1/me/export'])
+    expect(fileName).toBe('game-log-ana-2026-10-04.json')
+    expect(JSON.parse(await files[0]!.text())).toEqual(data)
+    expect(wrapper.find('[role="status"]').text()).toContain('Confira seus downloads')
+
+    wrapper.unmount()
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:exportacao')
+  })
+
   it('Dados exclui a conta só depois de confirmar e volta ao início', async () => {
     stubApi()
     vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true)

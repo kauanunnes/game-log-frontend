@@ -1,14 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQueryClient } from '@tanstack/vue-query'
-import { deleteMe } from '@/api/me'
+import { deleteMe, exportMyData } from '@/api/me'
 import { useSubmit } from '@/lib/useSubmit'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 const router = useRouter()
 const queryClient = useQueryClient()
+
+/** O link do arquivo vale até sair da aba: o navegador ainda lê o arquivo depois do clique. */
+let fileUrl = ''
+onBeforeUnmount(() => fileUrl && URL.revokeObjectURL(fileUrl))
+
+const {
+  busy: exporting,
+  error: exportError,
+  done: exported,
+  submit: download,
+} = useSubmit(async () => {
+  const data = await exportMyData()
+  if (fileUrl) URL.revokeObjectURL(fileUrl)
+  fileUrl = URL.createObjectURL(
+    new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
+  )
+  const link = document.createElement('a')
+  link.href = fileUrl
+  link.download = `game-log-${data.account.username}-${data.exportedAt.slice(0, 10)}.json`
+  link.click()
+})
 
 const password = ref('')
 
@@ -31,9 +52,16 @@ function confirmDelete() {
   <div class="data">
     <fieldset>
       <legend>Exportar dados</legend>
-      <p class="prose">Um arquivo com sua biblioteca, avaliações e gastos. Chega em breve.</p>
+      <p class="prose">
+        Um arquivo JSON com sua conta, biblioteca, avaliações, gastos, listas, quem você segue e as
+        avaliações que curtiu.
+      </p>
+      <p v-if="exportError" class="error" role="alert">{{ exportError }}</p>
+      <p v-else-if="exported" class="prose success" role="status">
+        Arquivo gerado. Confira seus downloads.
+      </p>
       <div class="actions">
-        <button type="button" disabled>Exportar</button>
+        <button type="button" :disabled="exporting" @click="download">Exportar</button>
       </div>
     </fieldset>
 

@@ -1,4 +1,5 @@
 import type {
+  AccountExport,
   Activity,
   FollowUser,
   GameList,
@@ -34,6 +35,9 @@ export const changeMyPassword = (currentPassword: string, newPassword: string) =
 
 export const deleteMe = (password: string) =>
   api<void>('/me', { method: 'DELETE', body: { password } })
+
+/** Inclui o que é privado, como loja e valor pago (RF10). */
+export const exportMyData = () => api<AccountExport>('/me/export')
 
 /** @param page começa em 0 */
 export const listMyReviews = (page: number) =>

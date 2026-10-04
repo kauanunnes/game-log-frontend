@@ -143,6 +143,13 @@ export interface Me {
   createdAt?: string
 }
 
+/** Tudo o que a conta guardou (`GET /me/export`); o front só salva em arquivo. */
+export interface AccountExport {
+  exportedAt: string
+  account: Me
+  [section: string]: unknown
+}
+
 export interface NamedCount {
   id: number
   name: string
