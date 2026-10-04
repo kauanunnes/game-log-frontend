@@ -196,6 +196,8 @@ export interface Profile {
   gender?: Gender
   memberSince?: string
   counts?: ProfileCounts
+  /** Os favoritos em destaque, na ordem escolhida. */
+  featured?: GameSummary[]
 }
 
 export type ListVisibility = 'PUBLIC' | 'PRIVATE'

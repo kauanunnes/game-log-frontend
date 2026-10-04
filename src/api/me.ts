@@ -2,6 +2,7 @@ import type {
   Activity,
   FollowUser,
   GameList,
+  GameSummary,
   LibraryEntry,
   LibraryEntryRequest,
   ListForm,
@@ -93,3 +94,7 @@ export const setListItems = (id: number, items: { gameId: number; note: string |
   api<GameList>(`/me/lists/${id}/items`, { method: 'PUT', body: { items } })
 
 export const deleteList = (id: number) => api<void>(`/me/lists/${id}`, { method: 'DELETE' })
+
+/** Até 5 favoritos em destaque, na ordem do array; lista vazia tira todos. */
+export const setFeatured = (gameIds: number[]) =>
+  api<GameSummary[]>('/me/library/featured', { method: 'PUT', body: { gameIds } })

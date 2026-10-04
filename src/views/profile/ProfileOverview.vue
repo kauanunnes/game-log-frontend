@@ -1,16 +1,31 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useQuery } from '@tanstack/vue-query'
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
 import type { LibraryQuery } from '@/api/users'
+import FeaturedEditor from '@/components/FeaturedEditor.vue'
 import GameCard from '@/components/GameCard.vue'
 import { formatNumber } from '@/lib/format'
 import { useProfileSource } from '@/lib/profileSource'
 
-/** Visão geral: favoritos, o que está jogando, o que mudou por último e um resumo dos números. */
+/** Visão geral: destaques, favoritos, o que está jogando, o que mudou por último e um resumo dos números. */
 const route = useRoute()
 const username = computed(() => String(route.params.username))
 const source = useProfileSource(username)
+const queryClient = useQueryClient()
+
+/** Os destaques vêm no cabeçalho; a mesma chave reaproveita o que o perfil já buscou. */
+const { data: profile } = useQuery({
+  queryKey: ['profile', username, source.isOwner, 'header'],
+  queryFn: source.header,
+})
+const featured = computed(() => profile.value?.featured ?? [])
+const editing = ref(false)
+
+function saved() {
+  editing.value = false
+  void queryClient.invalidateQueries({ queryKey: ['profile', username.value] })
+}
 
 const shelf = (name: string, query: LibraryQuery) =>
   useQuery({
@@ -35,6 +50,18 @@ const shelves = computed(() => [
 
 <template>
   <div class="overview">
+    <FeaturedEditor v-if="editing" :current="featured" @saved="saved" @cancel="editing = false" />
+    <fieldset v-else-if="featured.length || source.isOwner.value" class="featured">
+      <legend>Em destaque</legend>
+      <ul v-if="featured.length" class="grid">
+        <li v-for="game in featured" :key="game.id"><GameCard :game="game" /></li>
+      </ul>
+      <p v-else class="prose hint">Escolha até 5 favoritos para o topo do seu perfil.</p>
+      <button v-if="source.isOwner.value" type="button" class="choose" @click="editing = true">
+        Escolher destaques
+      </button>
+    </fieldset>
+
     <p v-if="stats" class="prose summary">
       {{ formatNumber(stats.total) }} {{ stats.total === 1 ? 'jogo' : 'jogos' }} na biblioteca ·
       {{ formatNumber(stats.hoursPlayed) }} horas jogadas
@@ -78,9 +105,14 @@ const shelves = computed(() => [
   margin: 0;
 }
 
-.more {
+.more,
+.choose {
   justify-self: end;
   font-size: 14px;
+}
+
+.featured .hint {
+  margin: 0;
 }
 
 .empty {
