@@ -198,6 +198,42 @@ export interface Profile {
   counts?: ProfileCounts
 }
 
+export type ListVisibility = 'PUBLIC' | 'PRIVATE'
+
+/** Uma lista na grade do perfil; {@code preview} são os quatro primeiros jogos. */
+export interface ListSummary {
+  id: number
+  title: string
+  description?: string | null
+  visibility: ListVisibility
+  itemCount: number
+  preview: GameSummary[]
+  updatedAt: string
+}
+
+export interface ListItem {
+  position: number
+  game: GameSummary
+  note?: string | null
+}
+
+export interface GameList {
+  id: number
+  title: string
+  description?: string | null
+  visibility: ListVisibility
+  owner: { username: string; displayName: string | null }
+  items: ListItem[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ListForm {
+  title: string
+  description: string | null
+  visibility: ListVisibility
+}
+
 export type ReportReason = 'SPAM' | 'OFFENSIVE' | 'SPOILER' | 'OTHER'
 export type ReportDecision = 'KEEP' | 'REMOVE'
 

@@ -91,6 +91,7 @@ async function mountAt(path: string) {
           { path: 'wishlist', name: 'profile-wishlist', component: blank },
           { path: 'favorites', name: 'profile-favorites', component: blank },
           { path: 'reviews', name: 'profile-reviews', component: blank },
+          { path: 'lists', name: 'profile-lists', component: blank },
           { path: 'stats', name: 'profile-stats', component: blank },
           {
             path: 'followers',

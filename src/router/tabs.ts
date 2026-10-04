@@ -12,6 +12,7 @@ export const profileTabs: Tab[] = [
   { path: 'wishlist', name: 'profile-wishlist', label: 'Lista de desejos' },
   { path: 'favorites', name: 'profile-favorites', label: 'Favoritos' },
   { path: 'reviews', name: 'profile-reviews', label: 'Avaliações' },
+  { path: 'lists', name: 'profile-lists', label: 'Listas' },
   { path: 'stats', name: 'profile-stats', label: 'Estatísticas' },
 ]
 

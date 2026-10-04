@@ -27,6 +27,7 @@ const profileViews: Record<string, TabView> = {
   'profile-wishlist': { component: LibraryTab, props: { statuses: ['WISHLIST'] } },
   'profile-favorites': { component: LibraryTab, props: { favorites: true } },
   'profile-reviews': { component: () => import('@/views/profile/ProfileReviewsTab.vue') },
+  'profile-lists': { component: () => import('@/views/profile/ProfileListsTab.vue') },
   'profile-stats': { component: () => import('@/views/profile/ProfileStatsTab.vue') },
 }
 
@@ -93,6 +94,13 @@ const routes: RouteRecordRaw[] = [
     name: 'feed',
     component: () => import('@/views/FeedView.vue'),
     meta: { title: 'Feed', requiresAuth: true },
+  },
+  {
+    path: '/u/:username/lists/:listId',
+    name: 'list',
+    component: () => import('@/views/ListView.vue'),
+    props: (route) => ({ username: route.params.username, listId: Number(route.params.listId) }),
+    meta: { title: 'Lista' },
   },
   {
     path: '/settings',

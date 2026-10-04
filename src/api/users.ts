@@ -1,7 +1,9 @@
 import type {
   EntryStatus,
   FollowUser,
+  GameList,
   LibraryEntry,
+  ListSummary,
   Page,
   Profile,
   PublicReview,
@@ -65,3 +67,10 @@ export const follow = (username: string) => api<void>(`${user(username)}/follow`
 
 export const unfollow = (username: string) =>
   api<void>(`${user(username)}/follow`, { method: 'DELETE' })
+
+/** Só as públicas; @param page começa em 0 */
+export const listUserLists = (username: string, page: number) =>
+  api<Page<ListSummary>>(`${user(username)}/lists?page=${page}&size=24`)
+
+export const getUserList = (username: string, id: number) =>
+  api<GameList>(`${user(username)}/lists/${id}`)

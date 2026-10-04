@@ -1,8 +1,11 @@
 import type {
   Activity,
   FollowUser,
+  GameList,
   LibraryEntry,
   LibraryEntryRequest,
+  ListForm,
+  ListSummary,
   Me,
   Page,
   Profile,
@@ -71,3 +74,22 @@ export const saveMyEntry = (gameId: number, body: LibraryEntryRequest) =>
 
 export const removeMyEntry = (gameId: number) =>
   api<void>(`/me/library/${gameId}`, { method: 'DELETE' })
+
+/** @param page começa em 0 */
+export const listMyLists = (page: number) =>
+  api<Page<ListSummary>>(`/me/lists?page=${page}&size=24`)
+
+export const createList = (form: ListForm) =>
+  api<GameList>('/me/lists', { method: 'POST', body: form })
+
+export const getMyList = (id: number) => api<GameList>(`/me/lists/${id}`)
+
+/** JSON Merge Patch: só o que vier muda. */
+export const updateList = (id: number, changes: Partial<ListForm>) =>
+  api<GameList>(`/me/lists/${id}`, { method: 'PATCH', body: changes })
+
+/** Troca os itens de uma vez, na ordem do array. */
+export const setListItems = (id: number, items: { gameId: number; note: string | null }[]) =>
+  api<GameList>(`/me/lists/${id}/items`, { method: 'PUT', body: { items } })
+
+export const deleteList = (id: number) => api<void>(`/me/lists/${id}`, { method: 'DELETE' })
