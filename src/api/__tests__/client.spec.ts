@@ -87,7 +87,10 @@ describe('errorMessage', () => {
   })
 
   it('sem resposta do servidor, avisa que não conectou', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof globalThis.fetch>().mockRejectedValue(new TypeError('Failed to fetch')),
+    )
 
     expect(await api('/me').catch(errorMessage)).toBe('Não foi possível conectar ao servidor.')
   })

@@ -173,7 +173,7 @@ describe('SettingsView', () => {
     // O jsdom não cria links de arquivo nem baixa nada.
     const files: Blob[] = []
     URL.createObjectURL = (file: Blob) => (files.push(file), 'blob:exportacao')
-    URL.revokeObjectURL = vi.fn()
+    URL.revokeObjectURL = vi.fn<(url: string) => void>()
     let fileName = ''
     vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
       this: HTMLAnchorElement,
