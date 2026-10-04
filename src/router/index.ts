@@ -12,6 +12,7 @@ declare module 'vue-router' {
 type TabView = Pick<RouteRecordRaw, 'component' | 'props'>
 
 const LibraryTab = () => import('@/views/profile/ProfileLibraryTab.vue')
+const FollowsTab = () => import('@/views/profile/ProfileFollowsTab.vue')
 
 /** O componente de cada aba do perfil; as abas de jogos mudam só o filtro. */
 const profileViews: Record<string, TabView> = {
@@ -67,7 +68,24 @@ const routes: RouteRecordRaw[] = [
     path: '/u/:username',
     component: () => import('@/views/ProfileView.vue'),
     props: true,
-    children: tabRoutes(profileTabs, 'Perfil', profileViews),
+    children: [
+      ...tabRoutes(profileTabs, 'Perfil', profileViews),
+      // Fora da faixa de abas: abrem pelos contadores do cabeçalho.
+      {
+        path: 'followers',
+        name: 'profile-followers',
+        component: FollowsTab,
+        props: { list: 'followers' },
+        meta: { title: 'Perfil · Seguidores' },
+      },
+      {
+        path: 'following',
+        name: 'profile-following',
+        component: FollowsTab,
+        props: { list: 'following' },
+        meta: { title: 'Perfil · Seguindo' },
+      },
+    ],
   },
   {
     path: '/settings',

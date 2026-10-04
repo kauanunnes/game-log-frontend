@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue'
+import { useQueryClient } from '@tanstack/vue-query'
 import { updateMe, type ProfileChanges } from '@/api/me'
 import { genderLabel } from '@/lib/labels'
 import { useSubmit } from '@/lib/useSubmit'
@@ -8,6 +9,7 @@ import type { Me } from '@/types/api'
 
 const props = defineProps<{ me: Me }>()
 const auth = useAuthStore()
+const queryClient = useQueryClient()
 
 const fromMe = (me: Me) => ({
   displayName: me.displayName ?? '',
@@ -31,6 +33,7 @@ const { busy, error, done, submit } = useSubmit(async () => {
   const me = await updateMe(changes.value)
   auth.user = me
   Object.assign(form, fromMe(me))
+  void queryClient.invalidateQueries({ queryKey: ['profile'] })
 })
 </script>
 

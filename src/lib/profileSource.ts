@@ -1,6 +1,13 @@
 import { computed, type Ref } from 'vue'
-import { getMyStats, listMyLibrary } from '@/api/me'
-import { getUserStats, listUserLibrary, type LibraryQuery } from '@/api/users'
+import { getMyProfile, getMyStats, listMyFollows, listMyLibrary } from '@/api/me'
+import {
+  getProfile,
+  getUserStats,
+  listUserFollows,
+  listUserLibrary,
+  type FollowList,
+  type LibraryQuery,
+} from '@/api/users'
 import { useAuthStore } from '@/stores/auth'
 
 /**
@@ -12,6 +19,9 @@ export function useProfileSource(username: Ref<string>) {
   const isOwner = computed(() => auth.user?.username === username.value)
   return {
     isOwner,
+    header: () => (isOwner.value ? getMyProfile() : getProfile(username.value)),
+    follows: (list: FollowList, page: number) =>
+      isOwner.value ? listMyFollows(list, page) : listUserFollows(username.value, list, page),
     library: (query: LibraryQuery) =>
       isOwner.value ? listMyLibrary(query) : listUserLibrary(username.value, query),
     stats: () => (isOwner.value ? getMyStats() : getUserStats(username.value)),

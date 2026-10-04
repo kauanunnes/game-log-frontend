@@ -1,5 +1,9 @@
-import type { EntryStatus, LibraryEntry, Page, Profile, Stats } from '@/types/api'
-import { api } from './client'
+import type { EntryStatus, FollowUser, LibraryEntry, Page, Profile, Stats } from '@/types/api'
+import { ApiError, api } from './client'
+
+export type FollowList = 'followers' | 'following'
+
+export const FOLLOWS_PAGE = 30
 
 /** Filtros de {@code /me/library} e {@code /users/{username}/library}; {@code page} começa em 0. */
 export interface LibraryQuery {
@@ -29,3 +33,23 @@ export const listUserLibrary = (username: string, query: LibraryQuery) =>
   api<Page<LibraryEntry>>(`${user(username)}/library?${libraryQuery(query)}`)
 
 export const getUserStats = (username: string) => api<Stats>(`${user(username)}/stats`)
+
+/** @param page começa em 0 */
+export const listUserFollows = (username: string, list: FollowList, page: number) =>
+  api<Page<FollowUser>>(`${user(username)}/${list}?page=${page}&size=${FOLLOWS_PAGE}`)
+
+/** A API responde 204 se eu sigo a pessoa e 404 se não. */
+export async function isFollowing(username: string) {
+  try {
+    await api<void>(`${user(username)}/follow`)
+    return true
+  } catch (error) {
+    if (error instanceof ApiError && error.problem.status === 404) return false
+    throw error
+  }
+}
+
+export const follow = (username: string) => api<void>(`${user(username)}/follow`, { method: 'PUT' })
+
+export const unfollow = (username: string) =>
+  api<void>(`${user(username)}/follow`, { method: 'DELETE' })

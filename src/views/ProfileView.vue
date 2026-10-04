@@ -2,52 +2,30 @@
 import { computed, toRef } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { ApiError } from '@/api/client'
-import { getMyCounts } from '@/api/me'
-import { getProfile } from '@/api/users'
 import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
+import FollowButton from '@/components/FollowButton.vue'
 import TabPanel from '@/components/TabPanel.vue'
 import { formatDate, formatNumber } from '@/lib/format'
 import { genderLabel } from '@/lib/labels'
 import { useProfileSource } from '@/lib/profileSource'
 import { profileTabs } from '@/router/tabs'
-import { useAuthStore } from '@/stores/auth'
-import type { LibraryCounts, Profile } from '@/types/api'
+import type { LibraryCounts } from '@/types/api'
 
 const props = defineProps<{ username: string }>()
 const username = toRef(props, 'username')
 
-const auth = useAuthStore()
-const { isOwner } = useProfileSource(username)
+const source = useProfileSource(username)
+const { isOwner } = source
 
+/** O dono recebe o cabeçalho completo mesmo com o perfil privado. */
 const {
-  data: publicProfile,
+  data: profile,
   error,
   refetch,
 } = useQuery({
-  queryKey: ['profile', username, 'header'],
-  queryFn: () => getProfile(username.value),
-  enabled: computed(() => !isOwner.value),
-})
-const { data: myCounts } = useQuery({
-  queryKey: ['me', computed(() => auth.user?.id), 'counts'],
-  queryFn: getMyCounts,
-  enabled: isOwner,
-})
-
-/** O dono vê os próprios dados (de /me) mesmo com o perfil privado. */
-const profile = computed<Profile | undefined>(() => {
-  const me = auth.user
-  if (!isOwner.value || !me) return publicProfile.value
-  return {
-    username: me.username,
-    displayName: me.displayName,
-    private: me.profileVisibility === 'PRIVATE',
-    bio: me.bio ?? undefined,
-    gender: me.gender ?? undefined,
-    memberSince: me.createdAt?.slice(0, 10),
-    counts: myCounts.value,
-  }
+  queryKey: ['profile', username, isOwner, 'header'],
+  queryFn: source.header,
 })
 
 /** RN14: o gênero aparece só se a pessoa informou. */
@@ -100,6 +78,17 @@ const tabs = computed(() =>
         <p v-if="profile.memberSince" class="prose since">
           Membro desde {{ formatDate(profile.memberSince) }}
         </p>
+        <p v-if="profile.counts" class="prose follows">
+          <RouterLink :to="{ name: 'profile-followers', params: { username } }">
+            <b>{{ formatNumber(profile.counts.followers) }}</b>
+            {{ profile.counts.followers === 1 ? 'seguidor' : 'seguidores' }}
+          </RouterLink>
+          ·
+          <RouterLink :to="{ name: 'profile-following', params: { username } }">
+            <b>{{ formatNumber(profile.counts.following) }}</b> seguindo
+          </RouterLink>
+        </p>
+        <FollowButton v-if="!isOwner" :username="username" />
         <dl v-if="profile.counts" class="counters">
           <div v-for="[key, label] in COUNTERS" :key="key">
             <dt>{{ label }}</dt>
@@ -144,6 +133,10 @@ p {
 
 .bio {
   max-width: 60ch;
+}
+
+.follows {
+  font-size: 14px;
 }
 
 .counters {

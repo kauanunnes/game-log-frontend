@@ -178,6 +178,12 @@ export interface LibraryCounts {
   reviews: number
 }
 
+/** Contadores do cabeçalho: as abas da biblioteca, seguidores e seguidos. */
+export interface ProfileCounts extends LibraryCounts {
+  followers: number
+  following: number
+}
+
 /** Num perfil privado, só username, displayName e {@code private}. */
 export interface Profile {
   username: string
@@ -186,7 +192,14 @@ export interface Profile {
   bio?: string
   gender?: Gender
   memberSince?: string
-  counts?: LibraryCounts
+  counts?: ProfileCounts
+}
+
+/** Uma pessoa da lista de seguidores ou de seguidos. */
+export interface FollowUser {
+  username: string
+  displayName: string | null
+  followedAt: string
 }
 
 export interface TokenResponse {

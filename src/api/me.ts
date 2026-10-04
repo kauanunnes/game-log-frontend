@@ -1,6 +1,14 @@
-import type { LibraryCounts, LibraryEntry, LibraryEntryRequest, Me, Page, Stats } from '@/types/api'
+import type {
+  FollowUser,
+  LibraryEntry,
+  LibraryEntryRequest,
+  Me,
+  Page,
+  Profile,
+  Stats,
+} from '@/types/api'
 import { ApiError, api } from './client'
-import { libraryQuery, type LibraryQuery } from './users'
+import { FOLLOWS_PAGE, libraryQuery, type FollowList, type LibraryQuery } from './users'
 
 export type ProfileChanges = Partial<Pick<Me, 'username' | 'displayName' | 'bio' | 'gender'>>
 export type SettingsChanges = Partial<
@@ -23,7 +31,12 @@ export const deleteMe = (password: string) =>
 
 export const getMyStats = () => api<Stats>('/me/stats')
 
-export const getMyCounts = () => api<LibraryCounts>('/me/library/counts')
+/** O mesmo cabeçalho de {@code /users/{username}}, completo mesmo com o perfil privado. */
+export const getMyProfile = () => api<Profile>('/me/profile')
+
+/** @param page começa em 0 */
+export const listMyFollows = (list: FollowList, page: number) =>
+  api<Page<FollowUser>>(`/me/${list}?page=${page}&size=${FOLLOWS_PAGE}`)
 
 export const listMyLibrary = (query: LibraryQuery) =>
   api<Page<LibraryEntry>>(`/me/library?${libraryQuery(query)}`)
