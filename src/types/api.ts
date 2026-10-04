@@ -297,4 +297,6 @@ export interface ProblemDetail {
   detail?: string
   code?: string
   errors?: { field: string; message: string }[]
+  /** Só nos erros 500: o código que acha o caso nos logs da API. */
+  traceId?: string
 }

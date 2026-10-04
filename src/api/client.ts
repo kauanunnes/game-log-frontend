@@ -13,11 +13,15 @@ export class ApiError extends Error {
   }
 }
 
-/** Mensagem para mostrar ao usuário, com o motivo de cada campo inválido quando houver. */
+/**
+ * Mensagem para mostrar ao usuário, com o motivo de cada campo inválido quando houver. Num erro do
+ * servidor, vai junto o código para quem for relatar o problema.
+ */
 export function errorMessage(error: unknown): string {
   if (!(error instanceof ApiError)) return 'Não foi possível conectar ao servidor.'
   const fields = error.problem.errors?.map((issue) => issue.message) ?? []
-  return fields.length ? fields.join(' · ') : error.message
+  const message = fields.length ? fields.join(' · ') : error.message
+  return error.problem.traceId ? `${message} Código do erro: ${error.problem.traceId}.` : message
 }
 
 export function setAccessToken(token: string | null) {
