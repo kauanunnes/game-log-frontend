@@ -6,6 +6,7 @@ declare module 'vue-router' {
   interface RouteMeta {
     title?: string
     requiresAuth?: boolean
+    requiresAdmin?: boolean
   }
 }
 
@@ -103,6 +104,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/admin/reports',
+    name: 'moderation',
+    component: () => import('@/views/ModerationView.vue'),
+    meta: { title: 'Moderação', requiresAuth: true, requiresAdmin: true },
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/LoginView.vue'),
@@ -138,8 +145,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.meta.requiresAuth && !useAuthStore().isLoggedIn) {
+  const auth = useAuthStore()
+  if (to.meta.requiresAuth && !auth.isLoggedIn) {
     return { name: 'login', query: { redirect: to.fullPath } }
+  }
+  if (to.meta.requiresAdmin && auth.user?.role !== 'ADMIN') {
+    return { name: 'home' }
   }
 })
 

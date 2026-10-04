@@ -6,6 +6,7 @@ import type {
   Page,
   Platform,
   PublicReview,
+  ReportReason,
   Store,
 } from '@/types/api'
 import { api } from './client'
@@ -45,6 +46,9 @@ export const listRecentReviews = (size: number) => api<Page<PublicReview>>(`/rev
 export const likeReview = (id: number) => api<void>(`/reviews/${id}/like`, { method: 'PUT' })
 
 export const unlikeReview = (id: number) => api<void>(`/reviews/${id}/like`, { method: 'DELETE' })
+
+export const reportReview = (id: number, reason: ReportReason, details: string) =>
+  api<void>(`/reviews/${id}/reports`, { method: 'POST', body: { reason, details } })
 
 export const listGenres = () => api<Genre[]>('/genres')
 

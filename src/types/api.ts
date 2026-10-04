@@ -198,6 +198,21 @@ export interface Profile {
   counts?: ProfileCounts
 }
 
+export type ReportReason = 'SPAM' | 'OFFENSIVE' | 'SPOILER' | 'OTHER'
+export type ReportDecision = 'KEEP' | 'REMOVE'
+
+/** Uma avaliação com as denúncias abertas dela, para a moderação. */
+export interface ReportedReview {
+  review: PublicReview
+  reports: {
+    id: number
+    reason: ReportReason
+    details: string | null
+    reporter: string
+    createdAt: string
+  }[]
+}
+
 export type ActivityType = 'STATUS' | 'REVIEW' | 'FAVORITE'
 
 /** Um item do feed. Em {@code STATUS}, o status daquele momento; nos outros, o atual. */

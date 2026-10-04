@@ -27,6 +27,7 @@ const links = computed<{ label: string; to: RouteLocationRaw }[]>(() => [
         { label: 'Feed', to: { name: 'feed' } },
         { label: 'Meu perfil', to: { name: 'profile', params: { username: auth.user.username } } },
         { label: 'Configurações', to: { name: 'settings' } },
+        ...(auth.user.role === 'ADMIN' ? [{ label: 'Moderação', to: { name: 'moderation' } }] : []),
       ]
     : [
         { label: 'Entrar', to: { name: 'login' } },

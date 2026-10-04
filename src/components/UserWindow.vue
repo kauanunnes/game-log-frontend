@@ -81,6 +81,9 @@ async function logout() {
         Meu perfil
       </RouterLink>
       <RouterLink class="button" :to="{ name: 'settings' }">Configurações</RouterLink>
+      <RouterLink v-if="auth.user.role === 'ADMIN'" class="button" :to="{ name: 'moderation' }">
+        Moderação
+      </RouterLink>
       <button type="button" @click="logout">Sair</button>
     </nav>
   </AppWindow>

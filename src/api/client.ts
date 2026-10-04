@@ -63,5 +63,7 @@ export async function api<T>(path: string, init?: ApiInit): Promise<T> {
   let res = await send(path, init)
   if (res.status === 401 && accessToken && (await refreshSession())) res = await send(path, init)
   if (!res.ok) throw new ApiError(await toProblem(res))
-  return (res.status === 204 ? undefined : await res.json()) as T
+  // Sem corpo (um 204, ou um 201 que só confirma), a resposta vira undefined.
+  const json = res.headers.get('Content-Type')?.includes('json')
+  return (json ? await res.json() : undefined) as T
 }

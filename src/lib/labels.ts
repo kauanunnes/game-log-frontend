@@ -1,4 +1,11 @@
-import type { AcquisitionMethod, EntryStatus, GameKind, GameSort, Gender } from '@/types/api'
+import type {
+  AcquisitionMethod,
+  EntryStatus,
+  GameKind,
+  GameSort,
+  Gender,
+  ReportReason,
+} from '@/types/api'
 
 export const statusLabel: Record<EntryStatus, string> = {
   WISHLIST: 'Lista de desejos',
@@ -39,4 +46,11 @@ export const acquisitionLabel: Record<AcquisitionMethod, string> = {
   GIFT: 'Presente',
   SUBSCRIPTION: 'Assinatura',
   FREE: 'Gratuito',
+}
+
+export const reportReasonLabel: Record<ReportReason, string> = {
+  SPAM: 'Spam ou propaganda',
+  OFFENSIVE: 'Ofensiva ou discriminatória',
+  SPOILER: 'Spoiler sem aviso',
+  OTHER: 'Outro motivo',
 }

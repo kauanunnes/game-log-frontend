@@ -4,13 +4,20 @@ import { formatDate } from '@/lib/format'
 import { statusLabel } from '@/lib/labels'
 import type { PublicReview } from '@/types/api'
 import LikeButton from './LikeButton.vue'
+import ReportButton from './ReportButton.vue'
 import StarRating from './StarRating.vue'
 
 /**
  * @param showGame mostra o jogo em vez do autor (lista de uma pessoa só)
  * @param liked se eu curti; vem da página, que pergunta por todas as avaliações dela de uma vez
+ * @param actions curtir e denunciar; a moderação desliga
  */
-defineProps<{ review: PublicReview; showGame?: boolean; liked?: boolean }>()
+const { actions = true } = defineProps<{
+  review: PublicReview
+  showGame?: boolean
+  liked?: boolean
+  actions?: boolean
+}>()
 
 const revealed = ref(false)
 </script>
@@ -50,7 +57,10 @@ const revealed = ref(false)
       <span class="prose when">
         {{ statusLabel[review.status] }} · {{ formatDate(review.reviewedAt.slice(0, 10)) }}
       </span>
-      <LikeButton :review="review" :liked="liked ?? false" />
+      <span v-if="actions" class="actions">
+        <LikeButton :review="review" :liked="liked ?? false" />
+        <ReportButton :review="review" />
+      </span>
     </footer>
   </article>
 </template>
@@ -104,5 +114,12 @@ mark.no {
 .when {
   color: var(--muted);
   font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
 }
 </style>
