@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { listRecentReviews, searchGames } from '@/api/games'
-import { getMyRecommendations } from '@/api/me'
 import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
 import GameCard from '@/components/GameCard.vue'
@@ -12,6 +11,7 @@ import PixelStar from '@/components/PixelStar.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
 import SuggestionList from '@/components/SuggestionList.vue'
 import { useLikedReviews } from '@/lib/likes'
+import { useRecommendations } from '@/lib/recommendations'
 import { useAuthStore } from '@/stores/auth'
 
 const TRENDING = 12
@@ -42,11 +42,7 @@ const {
 const liked = useLikedReviews(computed(() => reviews.value?.content))
 
 /** Com sessão, as primeiras sugestões de "Para você", na mesma consulta da tela inteira. */
-const { data: recommendations } = useQuery({
-  queryKey: ['me', computed(() => auth.user?.id), 'recommendations'],
-  queryFn: getMyRecommendations,
-  enabled: computed(() => !!auth.user),
-})
+const { data: recommendations } = useRecommendations(computed(() => !!auth.user))
 const suggestions = computed(() => recommendations.value?.suggestions.slice(0, SUGGESTIONS) ?? [])
 </script>
 

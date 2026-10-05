@@ -1,20 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useQuery } from '@tanstack/vue-query'
-import { getMyRecommendations } from '@/api/me'
 import AppWindow from '@/components/AppWindow.vue'
 import ErrorMessage from '@/components/ErrorMessage.vue'
 import GameCardSkeleton from '@/components/GameCardSkeleton.vue'
 import SuggestionList from '@/components/SuggestionList.vue'
-import { useAuthStore } from '@/stores/auth'
+import { useRecommendations } from '@/lib/recommendations'
 
-const auth = useAuthStore()
-
-/** A biblioteca mexida invalida tudo em ['me'], e as sugestões são recalculadas. */
-const { data, error, refetch } = useQuery({
-  queryKey: ['me', computed(() => auth.user?.id), 'recommendations'],
-  queryFn: getMyRecommendations,
-})
+const { data, error, refetch } = useRecommendations()
 </script>
 
 <template>
@@ -27,7 +18,11 @@ const { data, error, refetch } = useQuery({
         <li v-for="n in 8" :key="n"><GameCardSkeleton /></li>
       </ul>
       <template v-else>
-        <p v-if="data.personalized" class="prose">
+        <p v-if="data.source === 'CLAUDE'" class="prose">
+          Escolhidas e explicadas pelo Claude a partir do que você favoritou, avaliou e escreveu,
+          entre os jogos parecidos que você ainda não tem.
+        </p>
+        <p v-else-if="data.personalized" class="prose">
           Jogos parecidos com os que você favoritou, avaliou bem ou quer jogar, fora os que já estão
           na sua biblioteca.
         </p>
@@ -35,11 +30,15 @@ const { data, error, refetch } = useQuery({
           Ainda não sabemos do que você gosta. Favorite ou avalie alguns jogos e as sugestões passam
           a seguir o seu gosto; por enquanto, aqui estão os mais populares.
         </p>
+        <p v-if="data.curating" class="prose curating" role="status">
+          O Claude está escolhendo as melhores para você; a lista muda sozinha em alguns segundos.
+        </p>
         <SuggestionList :suggestions="data.suggestions" />
       </template>
     </div>
     <template #status>
-      <span>Sugestões por semelhança, sem IA generativa</span>
+      <span v-if="data?.source === 'CLAUDE'">Escolhidas pelo Claude</span>
+      <span v-else>Sugestões por semelhança</span>
     </template>
   </AppWindow>
 </template>
@@ -48,6 +47,12 @@ const { data, error, refetch } = useQuery({
 .stack {
   display: grid;
   gap: 12px;
+}
+
+.curating {
+  padding: 6px 10px;
+  background: var(--pastel);
+  box-shadow: var(--sunken);
 }
 
 p {

@@ -58,6 +58,8 @@ describe('ForYouView', () => {
         { game: game(2, 'Celeste'), reason: 'Parecido com Hades, que você recomenda.' },
       ],
       personalized: true,
+      source: 'SEARCH',
+      curating: false,
     })
 
     await vi.waitFor(() => expect(wrapper.findAll('.reason')).toHaveLength(2))
@@ -66,10 +68,39 @@ describe('ForYouView', () => {
     expect(wrapper.text()).toContain('fora os que já estão na sua biblioteca')
   })
 
+  it('avisa enquanto o Claude escolhe e mostra quando as sugestões são dele', async () => {
+    const curating = await mountWith({
+      suggestions: [
+        { game: game(1, 'Ori'), reason: 'Parecido com Hollow Knight, que você favoritou.' },
+      ],
+      personalized: true,
+      source: 'SEARCH',
+      curating: true,
+    })
+    await vi.waitFor(() => expect(curating.find('.curating').exists()).toBe(true))
+    expect(curating.find('[role="status"]').text()).toContain('O Claude está escolhendo')
+    curating.unmount()
+
+    const chosen = await mountWith({
+      suggestions: [
+        { game: game(1, 'Ori'), reason: 'A exploração de Hollow Knight, com mais leveza.' },
+      ],
+      personalized: true,
+      source: 'CLAUDE',
+      curating: false,
+    })
+    await vi.waitFor(() => expect(chosen.find('.reason').exists()).toBe(true))
+    expect(chosen.text()).toContain('Escolhidas e explicadas pelo Claude')
+    expect(chosen.find('.curating').exists()).toBe(false)
+    expect(chosen.find('.reason').text()).toBe('A exploração de Hollow Knight, com mais leveza.')
+  })
+
   it('sem sinais na biblioteca, explica que são os populares', async () => {
     const wrapper = await mountWith({
       suggestions: [{ game: game(3, 'Portal'), reason: 'Entre os mais populares do IGDB.' }],
       personalized: false,
+      source: 'SEARCH',
+      curating: false,
     })
 
     await vi.waitFor(() => expect(wrapper.find('.reason').exists()).toBe(true))

@@ -28,6 +28,10 @@ export interface Recommendations {
   suggestions: Suggestion[]
   /** `false` quando a biblioteca ainda não diz nada do gosto e as sugestões são só os populares. */
   personalized: boolean
+  /** A busca (motivo por template) ou a escolha do Claude, com o motivo escrito por ele. */
+  source: 'SEARCH' | 'CLAUDE'
+  /** O Claude está escolhendo em segundo plano: vale perguntar de novo em alguns segundos. */
+  curating: boolean
 }
 
 /** Jogos parecidos de dois jeitos, para comparar. */

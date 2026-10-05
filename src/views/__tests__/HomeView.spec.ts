@@ -99,7 +99,14 @@ describe('HomeView', () => {
   })
 
   it('com sessão, troca "Criar conta" pelo atalho de Jogando', async () => {
-    stubApi({ '/api/v1/me/recommendations': { suggestions: [], personalized: false } })
+    stubApi({
+      '/api/v1/me/recommendations': {
+        suggestions: [],
+        personalized: false,
+        source: 'SEARCH',
+        curating: false,
+      },
+    })
     useAuthStore().user = {
       id: 1,
       username: 'ana',
@@ -123,6 +130,8 @@ describe('HomeView', () => {
           game: { ...celeste, id: i + 1 },
         })),
         personalized: true,
+        source: 'SEARCH',
+        curating: false,
       },
     })
     useAuthStore().user = {
