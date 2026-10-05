@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import TaskBar from '@/components/TaskBar.vue'
+import MenuBar from '@/components/MenuBar.vue'
 import UserWindow from '@/components/UserWindow.vue'
 </script>
 
 <template>
+  <MenuBar />
   <div class="desktop">
     <aside class="side" aria-label="Sua conta"><UserWindow /></aside>
     <main class="main"><RouterView /></main>
   </div>
-  <TaskBar />
 </template>
 
 <style scoped>
@@ -25,7 +25,7 @@ import UserWindow from '@/components/UserWindow.vue'
 
 .side {
   position: sticky;
-  top: 24px;
+  top: calc(var(--menubar-height) + 24px);
 }
 
 .main {

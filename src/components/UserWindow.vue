@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useQuery } from '@tanstack/vue-query'
 import { getMyStats, listMyLibrary } from '@/api/me'
 import { statusLabel } from '@/lib/labels'
@@ -13,7 +13,6 @@ const COUNTED: EntryStatus[] = ['PLAYED', 'PLAYING', 'BACKLOG', 'WISHLIST']
 
 const auth = useAuthStore()
 const route = useRoute()
-const router = useRouter()
 
 const userId = computed(() => auth.user?.id)
 const loggedIn = computed(() => auth.isLoggedIn)
@@ -35,11 +34,6 @@ const loginRoute = computed(() =>
     ? { name: 'login' }
     : { name: 'login', query: { redirect: route.fullPath } },
 )
-
-async function logout() {
-  await auth.logout()
-  await router.push({ name: 'home' })
-}
 </script>
 
 <template>
@@ -71,22 +65,6 @@ async function logout() {
         Nada em andamento. <RouterLink :to="{ name: 'explore' }">Explore jogos</RouterLink>
       </p>
     </fieldset>
-
-    <nav class="links">
-      <RouterLink class="button" :to="{ name: 'feed' }">Feed</RouterLink>
-      <RouterLink class="button" :to="{ name: 'for-you' }">Para você</RouterLink>
-      <RouterLink
-        class="button"
-        :to="{ name: 'profile', params: { username: auth.user.username } }"
-      >
-        Meu perfil
-      </RouterLink>
-      <RouterLink class="button" :to="{ name: 'settings' }">Configurações</RouterLink>
-      <RouterLink v-if="auth.user.role === 'ADMIN'" class="button" :to="{ name: 'moderation' }">
-        Moderação
-      </RouterLink>
-      <button type="button" @click="logout">Sair</button>
-    </nav>
   </AppWindow>
 
   <AppWindow v-else title="Bem-vindo.exe" tone="pink">
@@ -144,10 +122,6 @@ async function logout() {
 .counts dd {
   margin: 0;
   font: 16px var(--font-display);
-}
-
-.playing {
-  margin-bottom: 12px;
 }
 
 .playing ul {

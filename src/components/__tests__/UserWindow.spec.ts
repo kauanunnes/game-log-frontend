@@ -1,4 +1,4 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -97,34 +97,5 @@ describe('UserWindow', () => {
     expect(wrapper.text()).toContain('@ana')
     expect(wrapper.find('.counts').text()).toContain('Jogado5')
     expect(link(wrapper, 'Hades')?.attributes('href')).toBe('/games/hades')
-    expect(link(wrapper, 'Meu perfil')?.attributes('href')).toBe('/u/ana')
-    expect(link(wrapper, 'Feed')?.attributes('href')).toBe('/feed')
-  })
-
-  it('sair encerra a sessão e volta para o início', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn<typeof globalThis.fetch>(async (input) =>
-        String(input).startsWith('/api/v1/auth/logout')
-          ? new Response(null, { status: 204 })
-          : json(stats),
-      ),
-    )
-    useAuthStore().user = {
-      id: 2,
-      username: 'bia',
-      email: 'bia@example.com',
-      displayName: null,
-      bio: null,
-      gender: null,
-    }
-    const { wrapper, router } = await mountAt('/games')
-
-    await wrapper.find('button').trigger('click')
-    await flushPromises()
-
-    expect(useAuthStore().isLoggedIn).toBe(false)
-    expect(router.currentRoute.value.name).toBe('home')
-    expect(wrapper.find('h1').text()).toBe('Bem-vindo.exe')
   })
 })
