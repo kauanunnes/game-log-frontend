@@ -10,17 +10,24 @@ import UnderConstruction from '@/components/UnderConstruction.vue'
 import { genderLabel } from '@/lib/labels'
 import type { EntryStatus, GameSummary } from '@/types/api'
 
+/** Os papéis, que mudam com o tema escolhido no menu Exibir, e dois acentos fixos. */
 const swatches = [
   'desktop',
   'surface',
-  'navy',
-  'blue',
-  'pink',
-  'pink-deep',
-  'aqua',
-  'yellow',
+  'field',
+  'text',
+  'muted',
   'link',
-  'red',
+  'highlight',
+  'neutral',
+  'notice',
+  'accent',
+  'accent-pink',
+  'danger',
+  'success',
+  'star',
+  'navy',
+  'pink',
 ]
 
 const rating = ref<number | null>(4.75)
