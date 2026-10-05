@@ -59,6 +59,7 @@ describe('ForYouView', () => {
       ],
       personalized: true,
       source: 'SEARCH',
+      curator: null,
       curating: false,
     })
 
@@ -68,17 +69,18 @@ describe('ForYouView', () => {
     expect(wrapper.text()).toContain('fora os que já estão na sua biblioteca')
   })
 
-  it('avisa enquanto o Claude escolhe e mostra quando as sugestões são dele', async () => {
+  it('avisa enquanto o modelo escolhe e diz quando as sugestões são dele', async () => {
     const curating = await mountWith({
       suggestions: [
         { game: game(1, 'Ori'), reason: 'Parecido com Hollow Knight, que você favoritou.' },
       ],
       personalized: true,
       source: 'SEARCH',
+      curator: 'Gemini',
       curating: true,
     })
     await vi.waitFor(() => expect(curating.find('.curating').exists()).toBe(true))
-    expect(curating.find('[role="status"]').text()).toContain('O Claude está escolhendo')
+    expect(curating.find('[role="status"]').text()).toContain('O Gemini está escolhendo')
     curating.unmount()
 
     const chosen = await mountWith({
@@ -86,11 +88,13 @@ describe('ForYouView', () => {
         { game: game(1, 'Ori'), reason: 'A exploração de Hollow Knight, com mais leveza.' },
       ],
       personalized: true,
-      source: 'CLAUDE',
+      source: 'AI',
+      curator: 'Gemini',
       curating: false,
     })
     await vi.waitFor(() => expect(chosen.find('.reason').exists()).toBe(true))
-    expect(chosen.text()).toContain('Escolhidas e explicadas pelo Claude')
+    expect(chosen.text()).toContain('Escolhidas e explicadas pelo Gemini')
+    expect(chosen.text()).toContain('Escolhidas pelo Gemini')
     expect(chosen.find('.curating').exists()).toBe(false)
     expect(chosen.find('.reason').text()).toBe('A exploração de Hollow Knight, com mais leveza.')
   })
@@ -100,6 +104,7 @@ describe('ForYouView', () => {
       suggestions: [{ game: game(3, 'Portal'), reason: 'Entre os mais populares do IGDB.' }],
       personalized: false,
       source: 'SEARCH',
+      curator: null,
       curating: false,
     })
 

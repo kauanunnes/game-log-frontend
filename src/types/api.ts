@@ -28,9 +28,11 @@ export interface Recommendations {
   suggestions: Suggestion[]
   /** `false` quando a biblioteca ainda não diz nada do gosto e as sugestões são só os populares. */
   personalized: boolean
-  /** A busca (motivo por template) ou a escolha do Claude, com o motivo escrito por ele. */
-  source: 'SEARCH' | 'CLAUDE'
-  /** O Claude está escolhendo em segundo plano: vale perguntar de novo em alguns segundos. */
+  /** A busca (motivo por template) ou a escolha do modelo, com o motivo escrito por ele. */
+  source: 'SEARCH' | 'AI'
+  /** O modelo que escolhe, como "Gemini" ou "Claude"; `null` quando a API está sem a chave. */
+  curator: string | null
+  /** O modelo está escolhendo em segundo plano: vale perguntar de novo em alguns segundos. */
   curating: boolean
 }
 

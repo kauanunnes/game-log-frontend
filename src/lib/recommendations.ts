@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/vue-query'
 import { getMyRecommendations } from '@/api/me'
 import { useAuthStore } from '@/stores/auth'
 
-/** Enquanto o Claude escolhe em segundo plano, a API manda perguntar de novo. */
+/** Enquanto o modelo escolhe em segundo plano, a API manda perguntar de novo. */
 const CURATING_POLL_MS = 3000
 
 /**

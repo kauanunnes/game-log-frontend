@@ -104,6 +104,7 @@ describe('HomeView', () => {
         suggestions: [],
         personalized: false,
         source: 'SEARCH',
+        curator: null,
         curating: false,
       },
     })
@@ -131,6 +132,7 @@ describe('HomeView', () => {
         })),
         personalized: true,
         source: 'SEARCH',
+        curator: null,
         curating: false,
       },
     })

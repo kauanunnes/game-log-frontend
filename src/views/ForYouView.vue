@@ -18,9 +18,9 @@ const { data, error, refetch } = useRecommendations()
         <li v-for="n in 8" :key="n"><GameCardSkeleton /></li>
       </ul>
       <template v-else>
-        <p v-if="data.source === 'CLAUDE'" class="prose">
-          Escolhidas e explicadas pelo Claude a partir do que você favoritou, avaliou e escreveu,
-          entre os jogos parecidos que você ainda não tem.
+        <p v-if="data.source === 'AI'" class="prose">
+          Escolhidas e explicadas pelo {{ data.curator }} a partir do que você favoritou, avaliou e
+          escreveu, entre os jogos parecidos que você ainda não tem.
         </p>
         <p v-else-if="data.personalized" class="prose">
           Jogos parecidos com os que você favoritou, avaliou bem ou quer jogar, fora os que já estão
@@ -31,13 +31,14 @@ const { data, error, refetch } = useRecommendations()
           a seguir o seu gosto; por enquanto, aqui estão os mais populares.
         </p>
         <p v-if="data.curating" class="prose curating" role="status">
-          O Claude está escolhendo as melhores para você; a lista muda sozinha em alguns segundos.
+          O {{ data.curator }} está escolhendo as melhores para você; a lista muda sozinha em alguns
+          segundos.
         </p>
         <SuggestionList :suggestions="data.suggestions" />
       </template>
     </div>
     <template #status>
-      <span v-if="data?.source === 'CLAUDE'">Escolhidas pelo Claude</span>
+      <span v-if="data?.source === 'AI'">Escolhidas pelo {{ data.curator }}</span>
       <span v-else>Sugestões por semelhança</span>
     </template>
   </AppWindow>
