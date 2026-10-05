@@ -326,7 +326,7 @@ function remove() {
 }
 
 .entry-dialog::backdrop {
-  background: rgb(0 0 0 / 35%);
+  background: var(--backdrop);
 }
 
 .statuses {
@@ -369,7 +369,7 @@ function remove() {
 .warning {
   margin: 0;
   padding: 8px 10px;
-  background: var(--yellow);
+  background: var(--notice);
   box-shadow: var(--sunken);
 }
 
@@ -382,6 +382,6 @@ function remove() {
 
 .remove {
   margin-right: auto;
-  color: var(--red);
+  color: var(--danger);
 }
 </style>

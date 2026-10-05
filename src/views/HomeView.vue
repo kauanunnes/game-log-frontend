@@ -164,7 +164,7 @@ const suggestions = computed(() => recommendations.value?.suggestions.slice(0, S
 .notice {
   margin: 0 0 12px;
   padding: 10px 12px;
-  background: var(--yellow);
+  background: var(--notice);
   box-shadow: var(--sunken);
 }
 

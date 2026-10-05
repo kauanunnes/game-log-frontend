@@ -94,7 +94,7 @@ mark {
 }
 
 mark.no {
-  background: var(--light);
+  background: var(--neutral);
 }
 
 .text {

@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeStore, type Theme } from '@/stores/theme'
 import PixelStar from './PixelStar.vue'
 
 interface Item {
@@ -9,6 +10,8 @@ interface Item {
   to?: RouteLocationRaw
   href?: string
   action?: () => void
+  /** Opção marcada, como os itens de rádio dos menus do Windows. */
+  checked?: boolean
 }
 
 interface Menu {
@@ -18,6 +21,7 @@ interface Menu {
 }
 
 const auth = useAuthStore()
+const theme = useThemeStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -39,6 +43,12 @@ async function logout() {
   await auth.logout()
   await router.push({ name: 'home' })
 }
+
+const themeItem = (value: Theme, label: string): Item => ({
+  label,
+  action: () => theme.choose(value),
+  checked: theme.theme === value,
+})
 
 const menus = computed<Menu[]>(() => [
   {
@@ -79,6 +89,15 @@ const menus = computed<Menu[]>(() => [
         ],
       },
   {
+    id: 'view',
+    label: 'Exibir',
+    items: [
+      themeItem('light', 'Tema claro'),
+      themeItem('dark', 'Tema escuro'),
+      themeItem('system', 'Tema do sistema'),
+    ],
+  },
+  {
     id: 'help',
     label: 'Ajuda',
     items: [
@@ -95,6 +114,12 @@ function toggle(id: string) {
 /** Com um menu aberto, passar o mouse em outro troca de menu, como no Windows. */
 function hover(id: string) {
   if (open.value) open.value = id
+}
+
+/** Como no Windows, escolher um item fecha o menu. */
+function run(item: Item) {
+  item.action?.()
+  close()
 }
 
 function close() {
@@ -125,7 +150,7 @@ onBeforeUnmount(() => {
         <PixelStar class="logo" /><span class="brand-name">Game Log</span>
       </RouterLink>
       <ul class="menus">
-        <li v-for="menu in menus" :key="menu.id" @mouseenter="hover(menu.id)">
+        <li v-for="menu in menus" :key="menu.id" :class="menu.id" @mouseenter="hover(menu.id)">
           <button
             type="button"
             :aria-expanded="open === menu.id"
@@ -140,7 +165,9 @@ onBeforeUnmount(() => {
               <a v-else-if="item.href" :href="item.href" target="_blank" rel="noopener">
                 {{ item.label }}
               </a>
-              <button v-else type="button" @click="item.action">{{ item.label }}</button>
+              <button v-else type="button" :aria-pressed="item.checked" @click="run(item)">
+                {{ item.label }}
+              </button>
             </li>
           </ul>
         </li>
@@ -157,8 +184,8 @@ onBeforeUnmount(() => {
   z-index: 10;
   background: var(--surface);
   box-shadow:
-    inset 0 -1px var(--gray),
-    0 1px var(--white);
+    inset 0 -1px var(--bevel-shadow),
+    0 1px var(--bevel-highlight);
 }
 
 nav {
@@ -202,12 +229,21 @@ ul {
 
 .menus > li {
   position: relative;
+  flex: none;
+}
+
+/* Quando falta espaço, quem encolhe é o nome de quem está logado, com reticências. */
+.menus > .user {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 180px;
 }
 
 /* Itens do menu são texto, como no Windows: sem o relevo dos botões. */
 .menus > li > button {
+  min-width: 0;
   min-height: 0;
-  max-width: 180px;
+  max-width: 100%;
   overflow: hidden;
   padding: 4px 10px;
   background: none;
@@ -251,11 +287,22 @@ ul {
   outline: none;
 }
 
+.dropdown button[aria-pressed] {
+  position: relative;
+  padding-left: 28px;
+}
+
+.dropdown button[aria-pressed='true']::before {
+  content: '•';
+  position: absolute;
+  left: 12px;
+}
+
 .tray {
   padding: 2px 10px;
   box-shadow:
-    inset 1px 1px var(--gray),
-    inset -1px -1px var(--white);
+    inset 1px 1px var(--bevel-shadow),
+    inset -1px -1px var(--bevel-highlight);
   font: 14px var(--font-text);
 }
 
@@ -263,6 +310,21 @@ ul {
   .tray,
   .brand-name {
     display: none;
+  }
+
+  .menus > li > button {
+    padding: 4px 7px;
+  }
+
+  /* No celular, o menu aberto ocupa a largura da barra, para não sair da tela. */
+  .menus > li {
+    position: static;
+  }
+
+  .dropdown {
+    right: 8px;
+    left: 8px;
+    min-width: 0;
   }
 }
 </style>

@@ -172,7 +172,7 @@ p {
 
 .notice {
   margin-bottom: 12px;
-  background: var(--yellow);
+  background: var(--notice);
 }
 
 .not-found {

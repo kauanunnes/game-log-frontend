@@ -80,6 +80,6 @@ const open = ref(false)
 }
 
 .status span {
-  color: var(--pink-deep);
+  color: var(--accent-pink);
 }
 </style>

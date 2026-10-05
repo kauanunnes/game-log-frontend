@@ -19,6 +19,8 @@ withDefaults(defineProps<{ title: string; tone?: 'navy' | 'pink' }>(), { tone: '
   padding: 3px;
   background: var(--surface);
   box-shadow: var(--window);
+  /* Num <dialog>, a cor do texto viria do navegador, e não do tema. */
+  color: var(--text);
 }
 
 .title-bar {
@@ -56,7 +58,7 @@ h1 {
   height: 16px;
   background: var(--surface);
   box-shadow: var(--raised);
-  color: var(--black);
+  color: var(--text);
   font: 700 12px/1 var(--font-text);
 }
 
@@ -73,8 +75,8 @@ h1 {
   flex: 1;
   padding: 2px 6px;
   box-shadow:
-    inset 1px 1px var(--gray),
-    inset -1px -1px var(--white);
+    inset 1px 1px var(--bevel-shadow),
+    inset -1px -1px var(--bevel-highlight);
   font: 13px var(--font-text);
 }
 </style>

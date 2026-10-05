@@ -22,7 +22,7 @@
 
 .line {
   height: 12px;
-  background: var(--light);
+  background: var(--neutral);
 }
 
 .short {

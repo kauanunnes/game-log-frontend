@@ -95,7 +95,7 @@ const {
 /* Botão de alternar do Win95: afundado e rosa enquanto está curtido. */
 button[aria-pressed='true'] {
   box-shadow: var(--pressed);
-  color: var(--pink-deep);
+  color: var(--accent-pink);
 }
 
 .error {

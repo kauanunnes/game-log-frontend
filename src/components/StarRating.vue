@@ -76,7 +76,7 @@ function onPick(index: number, event: MouseEvent) {
 
 .star {
   position: relative;
-  color: var(--light);
+  color: var(--neutral);
 }
 
 .star svg {

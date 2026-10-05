@@ -113,8 +113,8 @@ async function resolve(item: ReportedReview, decision: ReportDecision) {
 .items > li + li {
   padding-top: 16px;
   box-shadow:
-    inset 0 1px var(--gray),
-    inset 0 2px var(--white);
+    inset 0 1px var(--bevel-shadow),
+    inset 0 2px var(--bevel-highlight);
 }
 
 .title {

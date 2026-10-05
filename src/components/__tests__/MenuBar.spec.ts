@@ -59,6 +59,8 @@ describe('MenuBar', () => {
   afterEach(() => {
     wrapper?.unmount()
     vi.unstubAllGlobals()
+    localStorage.clear()
+    delete document.documentElement.dataset.theme
   })
 
   it('sem sessão, o menu Usuário oferece entrar e criar conta, voltando para a página atual', async () => {
@@ -117,6 +119,25 @@ describe('MenuBar', () => {
     await router.push('/games')
     await flushPromises()
     expect(opened('Jogos')).toBe(false)
+  })
+
+  it('o menu Exibir troca o tema, marca a opção escolhida e fecha', async () => {
+    await mountAt('/')
+    const option = (label: string) =>
+      menu('Exibir')
+        .findAll('.dropdown button')
+        .find((button) => button.text() === label)!
+
+    await menu('Exibir').find('button').trigger('click')
+    expect(items('Exibir')).toEqual(['Tema claro', 'Tema escuro', 'Tema do sistema'])
+    expect(option('Tema do sistema').attributes('aria-pressed')).toBe('true')
+
+    await option('Tema escuro').trigger('click')
+
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(opened('Exibir')).toBe(false)
+    expect(option('Tema escuro').attributes('aria-pressed')).toBe('true')
+    expect(option('Tema do sistema').attributes('aria-pressed')).toBe('false')
   })
 
   it('Sair encerra a sessão e volta para o início', async () => {

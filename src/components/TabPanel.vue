@@ -33,9 +33,9 @@ defineProps<{ tabs: { label: string; to: RouteLocationRaw }[] }>()
   padding: 4px 12px;
   background: var(--surface);
   box-shadow:
-    inset 1px 1px var(--white),
-    inset -1px 0 var(--black),
-    inset -2px 0 var(--gray);
+    inset 1px 1px var(--bevel-highlight),
+    inset -1px 0 var(--bevel-dark),
+    inset -2px 0 var(--bevel-shadow);
   color: var(--text);
   text-decoration: none;
   white-space: nowrap;
@@ -50,8 +50,8 @@ defineProps<{ tabs: { label: string; to: RouteLocationRaw }[] }>()
 .panel {
   padding: 12px;
   box-shadow:
-    inset 1px 1px var(--white),
-    inset -1px -1px var(--black),
-    inset -2px -2px var(--gray);
+    inset 1px 1px var(--bevel-highlight),
+    inset -1px -1px var(--bevel-dark),
+    inset -2px -2px var(--bevel-shadow);
 }
 </style>

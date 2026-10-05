@@ -84,7 +84,7 @@ function open() {
 }
 
 .report-dialog::backdrop {
-  background: rgb(0 0 0 / 35%);
+  background: var(--backdrop);
 }
 
 .success {

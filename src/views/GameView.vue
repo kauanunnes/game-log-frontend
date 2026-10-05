@@ -413,7 +413,7 @@ dd {
 
 .line {
   height: 16px;
-  background: var(--light);
+  background: var(--neutral);
 }
 
 .short {

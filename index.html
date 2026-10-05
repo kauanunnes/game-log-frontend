@@ -5,6 +5,13 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Log</title>
+    <script>
+      // Aplica o tema escolhido no menu Exibir antes da primeira pintura; sem escolha, o CSS segue o sistema.
+      try {
+        const theme = localStorage.getItem('game-log:theme')
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="app"></div>

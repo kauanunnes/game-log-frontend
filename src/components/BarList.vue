@@ -52,7 +52,7 @@ li {
   display: block;
   height: 100%;
   min-width: 2px;
-  background: var(--navy);
+  background: var(--accent);
 }
 
 .value {

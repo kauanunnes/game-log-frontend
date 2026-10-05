@@ -1,4 +1,6 @@
 :root {
+  color-scheme: light;
+
   --black: #000;
   --white: #fff;
   --silver: #c0c0c0;
@@ -14,38 +16,114 @@
   --red: #c00000;
   --green: #008000;
 
+  /* As cores acima são fixas; as de baixo dizem o papel e mudam no tema escuro. */
   --desktop: var(--teal);
+  --grid-line: rgb(255 255 255 / 6%);
   --surface: var(--silver);
   --field: var(--white);
   --text: var(--black);
   --muted: #404040;
+  --disabled: var(--gray);
   --link: #0000ee;
   --link-visited: #551a8b;
   --highlight: var(--aqua);
+  --neutral: var(--light);
+  --notice: var(--yellow);
+  --accent: var(--navy);
+  --accent-pink: var(--pink-deep);
+  --danger: var(--red);
+  --success: var(--green);
   --star: var(--yellow);
+  --backdrop: rgb(0 0 0 / 35%);
+  --scrollbar: var(--gray) var(--light);
   --title-bar: linear-gradient(90deg, var(--navy), var(--blue));
   --title-bar-pink: linear-gradient(90deg, var(--pink-deep), var(--pink));
   --pastel: linear-gradient(135deg, #ffd6f2, #e3d4ff, #c9f6ff);
 
+  /* Relevo do Win95: luz em cima e à esquerda, sombra embaixo e à direita. */
+  --bevel-highlight: var(--white);
+  --bevel-light: var(--light);
+  --bevel-shadow: var(--gray);
+  --bevel-dark: var(--black);
   --raised:
-    inset -1px -1px var(--black), inset 1px 1px var(--white), inset -2px -2px var(--gray),
-    inset 2px 2px var(--light);
+    inset -1px -1px var(--bevel-dark), inset 1px 1px var(--bevel-highlight),
+    inset -2px -2px var(--bevel-shadow), inset 2px 2px var(--bevel-light);
   --pressed:
-    inset -1px -1px var(--white), inset 1px 1px var(--black), inset -2px -2px var(--light),
-    inset 2px 2px var(--gray);
+    inset -1px -1px var(--bevel-highlight), inset 1px 1px var(--bevel-dark),
+    inset -2px -2px var(--bevel-light), inset 2px 2px var(--bevel-shadow);
   --sunken:
-    inset -1px -1px var(--white), inset 1px 1px var(--gray), inset -2px -2px var(--light),
-    inset 2px 2px var(--black);
+    inset -1px -1px var(--bevel-highlight), inset 1px 1px var(--bevel-shadow),
+    inset -2px -2px var(--bevel-light), inset 2px 2px var(--bevel-dark);
   --window:
-    inset -1px -1px var(--black), inset 1px 1px var(--light), inset -2px -2px var(--gray),
-    inset 2px 2px var(--white);
+    inset -1px -1px var(--bevel-dark), inset 1px 1px var(--bevel-light),
+    inset -2px -2px var(--bevel-shadow), inset 2px 2px var(--bevel-highlight);
   --etched:
-    inset -1px -1px var(--white), inset 1px 1px var(--gray), inset -2px -2px var(--gray),
-    inset 2px 2px var(--white);
+    inset -1px -1px var(--bevel-highlight), inset 1px 1px var(--bevel-shadow),
+    inset -2px -2px var(--bevel-shadow), inset 2px 2px var(--bevel-highlight);
 
   --font-display: 'Press Start 2P', monospace;
   --font-ui: 'Pixelify Sans', Tahoma, sans-serif;
   --font-text: 'IBM Plex Mono', 'Courier New', monospace;
 
   --menubar-height: 36px;
+}
+
+/*
+ * Tema escuro, uma noite vaporwave: escolhido no menu Exibir, ou o do sistema quando a pessoa não
+ * escolheu. As duas regras têm os mesmos valores.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --desktop: #1d1438;
+  --grid-line: rgb(255 110 199 / 9%);
+  --surface: #2e2e3e;
+  --field: #1a1a24;
+  --text: #ececf4;
+  --muted: #a9a9bd;
+  --disabled: #75758c;
+  --link: #8ab4ff;
+  --link-visited: #c8a2ff;
+  --highlight: #0f5c6b;
+  --neutral: #45455a;
+  --notice: #4d3f0a;
+  --accent: #7b8cff;
+  --accent-pink: var(--pink);
+  --danger: #ff7070;
+  --success: #6ee06e;
+  --backdrop: rgb(0 0 0 / 60%);
+  --scrollbar: #5c5c78 #1a1a24;
+  --pastel: linear-gradient(135deg, #3f2152, #2d2a5e, #173f4f);
+  --bevel-highlight: #5c5c78;
+  --bevel-light: #45455a;
+  --bevel-shadow: #1a1a24;
+  --bevel-dark: var(--black);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --desktop: #1d1438;
+    --grid-line: rgb(255 110 199 / 9%);
+    --surface: #2e2e3e;
+    --field: #1a1a24;
+    --text: #ececf4;
+    --muted: #a9a9bd;
+    --disabled: #75758c;
+    --link: #8ab4ff;
+    --link-visited: #c8a2ff;
+    --highlight: #0f5c6b;
+    --neutral: #45455a;
+    --notice: #4d3f0a;
+    --accent: #7b8cff;
+    --accent-pink: var(--pink);
+    --danger: #ff7070;
+    --success: #6ee06e;
+    --backdrop: rgb(0 0 0 / 60%);
+    --scrollbar: #5c5c78 #1a1a24;
+    --pastel: linear-gradient(135deg, #3f2152, #2d2a5e, #173f4f);
+    --bevel-highlight: #5c5c78;
+    --bevel-light: #45455a;
+    --bevel-shadow: #1a1a24;
+    --bevel-dark: var(--black);
+  }
 }
